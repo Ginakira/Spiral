@@ -31,19 +31,40 @@ atom: INT
     | '('! expr ')'!
     ;
 
-stmt: expr NEWLINE -> expr // Tree rewrite syntax
-    | ID ASSIGN expr NEWLINE -> ^(ASSIGN ID expr) // tree notation
-    | NEWLINE -> // ignore
-    ;
-
 ASSIGN: '=';
 
+stmt: expr ';' NEWLINE -> expr // Tree rewrite syntax
+    | ID ASSIGN expr ';' NEWLINE -> ^(ASSIGN ID expr) // tree notation
+    | ';'* NEWLINE -> // ignore
+    | def_stmt
+    | print_stmt
+    | blocks
+    ;
+
+// Print Statement
+print_stmt: PRINT^ expr ';'!;
+PRINT: 'print';
+
+// Define Statement
+def_stmt: DEF^ def_id (','! def_id)* ';'!;
+def_id: ID^ (ASSIGN! expr)?;
+DEF: 'def';
+
+// Scope block
+block_code : stmt*;
+blocks : '{' block_code '}' -> ^(BLOCK block_code);
+
+BLOCK: '&';
+
+
+
 prog
-    : (stmt { pANTLR3_STRING s = $stmt.tree->toStringTree($stmt.tree);
-              assert(s->chars);
-              printf(" tree \%s\n", s->chars);
-            }
-     )+
+    : ( blocks {
+         pANTLR3_STRING s = $blocks.tree->toStringTree($blocks.tree);
+         assert(s->chars);
+         printf(" tree \%s\n", s->chars);
+       }
+      )+
     ;
 
 ID: ('a'..'z'|'A'..'Z')+ ;

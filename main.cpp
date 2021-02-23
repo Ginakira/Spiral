@@ -17,7 +17,7 @@ class ExprTreeEvaluator {
 public:
     explicit ExprTreeEvaluator(ExprTreeEvaluator *);
 
-    int find(const string &);
+    int &find(const string &);
 
     int run(pANTLR3_BASE_TREE);
 
@@ -47,8 +47,7 @@ int main(int argc, char *argv[]) {
     pANTLR3_BASE_TREE tree = r.tree;
 
     ExprTreeEvaluator eval(nullptr);
-    int rr = eval.run(tree);
-    cout << "Evaluator result: " << rr << '\n';
+    eval.run(tree);
 
     parser->free(parser);
     tokens->free(tokens);
@@ -63,6 +62,37 @@ int ExprTreeEvaluator::run(pANTLR3_BASE_TREE tree) {
 
     if (tok) {
         switch (tok->type) {
+            case BLOCK: {
+                ExprTreeEvaluator new_block(this);
+                int k = tree->getChildCount(tree);
+                int r = 0;
+                for (int i = 0; i < k; ++i) {
+                    r = new_block.run(getChild(tree, i));
+                }
+                return r;
+            }
+            case DEF: {
+                int k = tree->getChildCount(tree);
+                for (int i = 0; i < k; ++i) {
+                    pANTLR3_BASE_TREE child = getChild(tree, i);
+                    string var(getText(child));
+                    if (this->memory.find(var) != this->memory.end()) {
+                        printf("Redefined variable: %s\n", var.c_str());
+                        exit(-1);
+                    }
+                    this->memory[var] = 0;
+                    if (child->getChildCount(child)) {
+                        int r = this->run(getChild(child, 0));
+                        this->memory[var] = r;
+                    }
+                }
+                return 0;
+            }
+            case PRINT: {
+                int r = run(getChild(tree, 0));
+                printf("%d\n", r);
+                return r;
+            }
             case INT: {
                 const char *s = getText(tree);
                 if (s[0] == '~') {
@@ -85,12 +115,13 @@ int ExprTreeEvaluator::run(pANTLR3_BASE_TREE tree) {
                 return run(getChild(tree, 0)) / run(getChild(tree, 1));
             case ASSIGN: {
                 string var(getText(getChild(tree, 0)));
+                int &var_instance = this->find(var);
                 int val = run(getChild(tree, 1));
-                memory[var] = val;
+                var_instance = val;
                 return val;
             }
             default: {
-                cout << "Unhandled token: #" << tok->type << '\n';
+                printf("Unhandled token: #%d\n", tok->type);
                 return -1;
             }
         }
@@ -99,18 +130,19 @@ int ExprTreeEvaluator::run(pANTLR3_BASE_TREE tree) {
         int r = 0;
         for (int i = 0; i < k; ++i) {
             r = run(getChild(tree, i));
-            cout << "value: " << r << '\n';
+            printf("value: %d\n", r);
         }
         return r;
     }
 }
 
-int ExprTreeEvaluator::find(const string &var) {
+int &ExprTreeEvaluator::find(const string &var) {
     if (this->memory.find(var) != this->memory.end()) {
         return this->memory[var];
     }
     if (this->next) return this->next->find(var);
-    return 0;
+    printf("Undefined variable: %s\n", var.c_str());
+    exit(-1);
 }
 
 ExprTreeEvaluator::ExprTreeEvaluator(ExprTreeEvaluator *_next) : next(_next) {
