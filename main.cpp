@@ -81,6 +81,8 @@ int ExprTreeEvaluator::run(pANTLR3_BASE_TREE tree) {
                 return run(getChild(tree, 0)) - run(getChild(tree, 1));
             case TIMES:
                 return run(getChild(tree, 0)) * run(getChild(tree, 1));
+            case DIV:
+                return run(getChild(tree, 0)) / run(getChild(tree, 1));
             case ASSIGN: {
                 string var(getText(getChild(tree, 0)));
                 int val = run(getChild(tree, 1));
@@ -97,6 +99,7 @@ int ExprTreeEvaluator::run(pANTLR3_BASE_TREE tree) {
         int r = 0;
         for (int i = 0; i < k; ++i) {
             r = run(getChild(tree, i));
+            cout << "value: " << r << '\n';
         }
         return r;
     }

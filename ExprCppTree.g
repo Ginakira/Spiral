@@ -20,10 +20,11 @@ PLUS: '+';
 MINUS: '-';
 
 multExpr
-    : atom (TIMES^ atom)*
+    : atom ((TIMES^ | DIV^) atom)*
     ;
 
 TIMES: '*';
+DIV: '/';
 
 atom: INT
     | ID
@@ -47,5 +48,5 @@ prog
 
 ID: ('a'..'z'|'A'..'Z')+ ;
 INT: '~'? '0'..'9'+ ;
-NEWLINE: '\r'? '\n' ;
+NEWLINE: '\r'? '\n';
 WS : (' '|'\t')+ { $channel = HIDDEN; };
