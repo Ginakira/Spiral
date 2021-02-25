@@ -13,8 +13,8 @@ set(EXECUTABLE_NAME spiral)
 set(GRAMMAR_NAME spiral)
 
 set(GRAMMAR_FILES
-        ${PROJECT_SOURCE_DIR}/thirdpart/${GRAMMAR_NAME}Lexer.c
-        ${PROJECT_SOURCE_DIR}/thirdpart/${GRAMMAR_NAME}Parser.c
+        ${PROJECT_SOURCE_DIR}/third-party/${GRAMMAR_NAME}Lexer.c
+        ${PROJECT_SOURCE_DIR}/third-party/${GRAMMAR_NAME}Parser.c
         )
 
 set(SOURCES
@@ -29,14 +29,14 @@ add_executable(${EXECUTABLE_NAME} ${SOURCES})
 target_include_directories(${EXECUTABLE_NAME}
         PRIVATE
         ${PROJECT_SOURCE_DIR}/include
-        ${PROJECT_SOURCE_DIR}/thirdpart
-        ${PROJECT_SOURCE_DIR}/thirdpart/include
+        ${PROJECT_SOURCE_DIR}/third-party
+        ${PROJECT_SOURCE_DIR}/third-party/include
         ${ANTLR3_CONFIG_INCLUDE_DIR}
         )
 
 target_link_directories(${EXECUTABLE_NAME}
         PRIVATE
-        ${PROJECT_SOURCE_DIR}/thirdpart/libs
+        ${PROJECT_SOURCE_DIR}/third-party/libs
         )
 
 target_link_libraries(${EXECUTABLE_NAME}
@@ -48,6 +48,6 @@ target_link_libraries(${EXECUTABLE_NAME}
 add_custom_command(
         OUTPUT ${GRAMMAR_FILES}
         COMMAND java -jar ./antlr-3.4-complete.jar Spiral.g
-        DEPENDS ${PROJECT_SOURCE_DIR}/thirdpart/Spiral.g
-        WORKING_DIRECTORY ${PROJECT_SOURCE_DIR}/thirdpart
+        DEPENDS ${PROJECT_SOURCE_DIR}/third-party/Spiral.g
+        WORKING_DIRECTORY ${PROJECT_SOURCE_DIR}/third-party
 )
