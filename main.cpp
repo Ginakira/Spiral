@@ -5,8 +5,9 @@
 #include <map>
 #include <iostream>
 
-#include "ExprCppTreeLexer.h"
-#include "ExprCppTreeParser.h"
+#include "SpiralLexer.h"
+#include "SpiralParser.h"
+#include "program_master.h"
 
 using std::map;
 using std::string;
@@ -24,29 +25,25 @@ public:
     ExprTreeEvaluator *next;
 };
 
-pANTLR3_BASE_TREE getChild(pANTLR3_BASE_TREE, unsigned);
 
-const char *getText(pANTLR3_BASE_TREE tree);
 
 int main(int argc, char *argv[]) {
     pANTLR3_INPUT_STREAM input;
-    pExprCppTreeLexer lex;
+    pSpiralLexer lex;
     pANTLR3_COMMON_TOKEN_STREAM tokens;
-    pExprCppTreeParser parser;
+    pSpiralParser parser;
 
     assert(argc > 1);
     input = antlr3FileStreamNew((pANTLR3_UINT8) argv[1], ANTLR3_ENC_8BIT);
-    lex = ExprCppTreeLexerNew(input);
+    lex = SpiralLexerNew(input);
 
     tokens = antlr3CommonTokenStreamSourceNew(ANTLR3_SIZE_HINT, TOKENSOURCE(lex));
 
-    parser = ExprCppTreeParserNew(tokens);
-
-    ExprCppTreeParser_prog_return r = parser->prog(parser);
-
+    parser = SpiralParserNew(tokens);
+    SpiralParser_prog_return r = parser->prog(parser);
     pANTLR3_BASE_TREE tree = r.tree;
 
-    ExprTreeEvaluator eval(nullptr);
+    ProgramMaster eval;
     eval.run(tree);
 
     parser->free(parser);
@@ -147,14 +144,4 @@ int &ExprTreeEvaluator::find(const string &var) {
 
 ExprTreeEvaluator::ExprTreeEvaluator(ExprTreeEvaluator *_next) : next(_next) {
 
-}
-
-
-pANTLR3_BASE_TREE getChild(pANTLR3_BASE_TREE tree, unsigned i) {
-    assert(i < tree->getChildCount(tree));
-    return (pANTLR3_BASE_TREE) tree->getChild(tree, i);
-}
-
-const char *getText(pANTLR3_BASE_TREE tree) {
-    return (const char *) tree->getText(tree)->chars;
 }

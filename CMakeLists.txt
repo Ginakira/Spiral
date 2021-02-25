@@ -10,17 +10,17 @@ find_path(ANTLR3_CONFIG_INCLUDE_DIR NAMES antlr3config.h)
 
 set(EXECUTABLE_NAME spiral)
 
-set(GRAMMAR_NAME ExprCppTree)
+set(GRAMMAR_NAME spiral)
 
 set(GRAMMAR_FILES
-        ${PROJECT_SOURCE_DIR}/${GRAMMAR_NAME}Lexer.c
-        ${PROJECT_SOURCE_DIR}/${GRAMMAR_NAME}Parser.c
+        ${PROJECT_SOURCE_DIR}/thirdpart/${GRAMMAR_NAME}Lexer.c
+        ${PROJECT_SOURCE_DIR}/thirdpart/${GRAMMAR_NAME}Parser.c
         )
 
 set(SOURCES
         ${PROJECT_SOURCE_DIR}/main.cpp
         ${GRAMMAR_FILES}
-        )
+        ${PROJECT_SOURCE_DIR}/src/program_master.cc)
 
 set(EXECUTABLE_OUTPUT_PATH ${PROJECT_SOURCE_DIR}/bin)
 
@@ -29,12 +29,14 @@ add_executable(${EXECUTABLE_NAME} ${SOURCES})
 target_include_directories(${EXECUTABLE_NAME}
         PRIVATE
         ${PROJECT_SOURCE_DIR}/include
+        ${PROJECT_SOURCE_DIR}/thirdpart
+        ${PROJECT_SOURCE_DIR}/thirdpart/include
         ${ANTLR3_CONFIG_INCLUDE_DIR}
         )
 
 target_link_directories(${EXECUTABLE_NAME}
         PRIVATE
-        ${PROJECT_SOURCE_DIR}/libs
+        ${PROJECT_SOURCE_DIR}/thirdpart/libs
         )
 
 target_link_libraries(${EXECUTABLE_NAME}
@@ -45,7 +47,7 @@ target_link_libraries(${EXECUTABLE_NAME}
 # Generate antlr3 grammar file
 add_custom_command(
         OUTPUT ${GRAMMAR_FILES}
-        COMMAND java -jar ./antlr-3.4-complete.jar ExprCppTree.g
-        DEPENDS ${PROJECT_SOURCE_DIR}/ExprCppTree.g
-        WORKING_DIRECTORY ${PROJECT_SOURCE_DIR}
+        COMMAND java -jar ./antlr-3.4-complete.jar Spiral.g
+        DEPENDS ${PROJECT_SOURCE_DIR}/thirdpart/Spiral.g
+        WORKING_DIRECTORY ${PROJECT_SOURCE_DIR}/thirdpart
 )
