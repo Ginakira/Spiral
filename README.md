@@ -6,6 +6,8 @@ An awesome interpreted language based on CPP & Antlr3.
 
 ```shell
 cmake -S . -B build
+cd build
+cmake --build .
 ```
 
 ## Run
@@ -16,13 +18,14 @@ cd bin
 # the "input.spr" can be any file you want to run with Spiral interpreter
 ```
 
-## Supported features
+## Features
 
 - Define variable `def`
 - Selective structure `if` `else`
 - Loop structure `while` `do while` `for`
 - Print statement `print`
 - Scoping capabilities
+- Weakly typed system
 
 ## Design
 
@@ -30,6 +33,7 @@ cd bin
 - Responsibility chain
 - Abstract factory
 - Singleton
+- Observer Pattern
 
 ## Third-party libraries
 
