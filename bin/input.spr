@@ -1,7 +1,7 @@
 {
-    def a = 233, b = 666;
+    def a = 233, b = 667;
     print a, b;
-    for (def a = 0; a < 100; a = a + 1) {
-        print a;
-    }
+    print a + b;
+    print a - b;
+    print a * b;
 }
