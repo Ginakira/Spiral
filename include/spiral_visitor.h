@@ -23,11 +23,11 @@ private:
     std::string _result;
 };
 
-class IntValueOperator : public IValue::IVisitor {
+class ValueOperator : public IValue::IVisitor {
 public:
-    typedef IValue *(IValue::*op_type)(IValue &);
+    typedef void (IValue::*op_type)(IValue &);
 
-    IntValueOperator(IntValue *, op_type);
+    ValueOperator(IValue *, op_type);
 
     void visit(IntValue *) override;
 
@@ -35,12 +35,32 @@ public:
 
     void visit(StringValue *) override;
 
-    IntValue *left;
-
-private:
+protected:
     op_type op;
-
+    IValue *lvalue, *_result{};
 };
+
+class IntValueOperator : public ValueOperator {
+public:
+    IntValueOperator(IntValue *, op_type);
+
+    IntValue *left;
+};
+
+class FloatValueOperator : public ValueOperator {
+public:
+    FloatValueOperator(FloatValue *, op_type);
+
+    FloatValue *left;
+};
+
+class StringValueOperator : public ValueOperator {
+public:
+    StringValueOperator(StringValue *, op_type);
+
+    StringValue *left;
+};
+
 
 class IntValuePlusOperatorVisitor : public IntValueOperator {
 public:
@@ -51,9 +71,6 @@ public:
     void visit(FloatValue *) override;
 
     IValue *result() const;
-
-private:
-    IValue *_result{};
 };
 
 class IntValueMinusOperatorVisitor : public IntValueOperator {
@@ -65,9 +82,6 @@ public:
     void visit(FloatValue *) override;
 
     IValue *result() const;
-
-private:
-    IValue *_result{};
 };
 
 class IntValueTimesOperatorVisitor : public IntValueOperator {
@@ -79,10 +93,65 @@ public:
     void visit(FloatValue *) override;
 
     IValue *result() const;
-
-private:
-    IValue *_result{};
 };
+
+
+class FloatValuePlusOperatorVisitor : public FloatValueOperator {
+public:
+    explicit FloatValuePlusOperatorVisitor(FloatValue *left);
+
+    void visit(IntValue *) override;
+
+    void visit(FloatValue *) override;
+
+    IValue *result() const;
+};
+
+class FloatValueMinusOperatorVisitor : public FloatValueOperator {
+public:
+    explicit FloatValueMinusOperatorVisitor(FloatValue *left);
+
+    void visit(IntValue *) override;
+
+    void visit(FloatValue *) override;
+
+    IValue *result() const;
+};
+
+class FloatValueTimesOperatorVisitor : public FloatValueOperator {
+public:
+    explicit FloatValueTimesOperatorVisitor(FloatValue *left);
+
+    void visit(IntValue *) override;
+
+    void visit(FloatValue *) override;
+
+    IValue *result() const;
+};
+
+
+class StringValuePlusOperatorVisitor : public StringValueOperator {
+public:
+    explicit StringValuePlusOperatorVisitor(StringValue *left);
+
+    void visit(IntValue *) override;
+
+    void visit(FloatValue *) override;
+
+    void visit(StringValue *) override;
+
+    IValue *result() const;
+};
+
+class StringValueTimesOperatorVisitor : public StringValueOperator {
+public:
+    explicit StringValueTimesOperatorVisitor(StringValue *left);
+
+    void visit(IntValue *) override;
+
+    IValue *result() const;
+};
+
 
 } // namespace spiral
 

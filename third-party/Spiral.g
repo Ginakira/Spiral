@@ -29,6 +29,8 @@ multExpr
 
 atom: INT
     | ID
+    | STRING
+    | FLOAT
     | '('! expr ')'!
     ;
 
@@ -42,7 +44,7 @@ for_expr
 
 while_expr
     : WHILE^ '('! condition_expr ')'! stmt
-    | DO '{' stmt '}' WHILE '(' condition_expr ')' ';' -> ^(DOWHILE condition_expr stmt)
+    | DO block WHILE '(' condition_expr ')' ';' -> ^(DOWHILE condition_expr block)
     ;
 
 init_expr
@@ -64,18 +66,32 @@ cond_atom
     : expr
     ;
 
-block
+block: block_expr -> ^(BLOCK block_expr);
+
+block_expr
     : '{'! (stmt)* '}'!
     ;
 
-stmt: expr ';' -> expr  // tree rewrite syntax
-    | defid_expr ';' -> ^(DEF defid_expr)
+print_atom
+    : condition_expr
+    ;
+
+expr_stmt
+    : expr ';' -> expr // tree rewrite syntax
     | ID ASSIGN expr ';' -> ^(ASSIGN ID expr) // tree notation
-    | block -> ^(BLOCK block)
+    | PRINT^ print_atom (','! print_atom)* ';'!
+    ;
+
+control_stmt
+    : for_expr
     | if_expr
-    | for_expr
     | while_expr
-    | PRINT^ expr (','! expr)* ';'!
+    | defid_expr ';' -> ^(DEF defid_expr)
+    | block
+    ;
+
+stmt: expr_stmt
+    | control_stmt
     ;
 
 prog

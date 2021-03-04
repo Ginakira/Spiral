@@ -49,6 +49,16 @@ IValue *ExprMaster::run() {
             sscanf(s, "%d", &val_int);
             return new IntValue(val_int);
         }
+        case FLOAT: {
+            const char *s = this->tree.text().c_str();
+            double val_float;
+            sscanf(s, "%lf", &val_float);
+            return new FloatValue(val_float);
+        }
+        case STRING: {
+            std::string val = this->tree.text();
+            return new StringValue(val.substr(1, val.size() - 2));
+        }
         case ID: {
             return this->p->get(this->tree.text());
         }

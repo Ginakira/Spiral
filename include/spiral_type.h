@@ -18,6 +18,7 @@ class StringValue;
 class IValue {
 public:
     explicit IValue(std::string);
+
     class IVisitor {
     public:
         virtual void visit(IntValue *) = 0;
@@ -27,6 +28,8 @@ public:
         virtual void visit(StringValue *) = 0;
     };
 
+    std::string type();
+
     virtual void accept(IVisitor *) = 0;
 
     virtual IValue *operator+(IValue &);
@@ -34,6 +37,12 @@ public:
     virtual IValue *operator-(IValue &);
 
     virtual IValue *operator*(IValue &);
+
+    void operator_plus_error(IValue &);
+
+    void operator_minus_error(IValue &);
+
+    void operator_times_error(IValue &);
 
     virtual ~IValue() = default;
 
@@ -67,11 +76,11 @@ public:
 
     double val() const;
 
-//    IValue *operator+(IValue &) override;
-//
-//    IValue *operator-(IValue &) override;
-//
-//    IValue *operator*(IValue &) override;
+    IValue *operator+(IValue &) override;
+
+    IValue *operator-(IValue &) override;
+
+    IValue *operator*(IValue &) override;
 
 private:
     double _val;
@@ -85,9 +94,9 @@ public:
 
     std::string val() const;
 
-//    IValue *operator+(IValue &) override;
-//
-//    IValue *operator*(IValue &) override;
+    IValue *operator+(IValue &) override;
+
+    IValue *operator*(IValue &) override;
 
 private:
     std::string _val;

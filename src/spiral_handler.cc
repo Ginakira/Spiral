@@ -53,6 +53,8 @@ void PrintFactoryHandler::handle(ASTree &tree) {
 bool ExprFactoryHandler::is_valid(ASTree &tree) {
     switch (tree.type()) {
         case INT:
+        case FLOAT:
+        case STRING:
         case ID:
         case PLUS:
         case MINUS:
