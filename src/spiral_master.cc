@@ -10,6 +10,7 @@
 #include "spiral_parameter.h"
 #include "spiral_visitor.h"
 #include "spiral_tree.h"
+#include "spiral_util.h"
 
 namespace spiral {
 
@@ -56,7 +57,9 @@ IValue *ExprMaster::run() {
             return new FloatValue(val_float);
         }
         case STRING: {
-            std::string val = this->tree.text();
+            // Escape character
+            // eg: 'h' 'e' 'l' 'l' 'o' '\' 'n' -> 'h' 'e' 'l' 'l' 'o' '\n'
+            std::string val = ConvertStringToCString(this->tree.text());
             return new StringValue(val.substr(1, val.size() - 2));
         }
         case ID: {

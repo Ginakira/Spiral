@@ -10,4 +10,6 @@
         print a + b;
     }
     print a;
+    print "spiral\n" * 3;
+    print a;
 }
