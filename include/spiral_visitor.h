@@ -95,6 +95,16 @@ public:
     IValue *result() const;
 };
 
+class IntValueLittleOperatorVisitor : public IntValueOperator {
+public:
+    explicit IntValueLittleOperatorVisitor(IntValue *left);
+
+    void visit(IntValue *) override;
+
+    void visit(FloatValue *) override;
+
+    IValue *result() const;
+};
 
 class FloatValuePlusOperatorVisitor : public FloatValueOperator {
 public:
@@ -106,6 +116,7 @@ public:
 
     IValue *result() const;
 };
+
 
 class FloatValueMinusOperatorVisitor : public FloatValueOperator {
 public:
@@ -121,6 +132,17 @@ public:
 class FloatValueTimesOperatorVisitor : public FloatValueOperator {
 public:
     explicit FloatValueTimesOperatorVisitor(FloatValue *left);
+
+    void visit(IntValue *) override;
+
+    void visit(FloatValue *) override;
+
+    IValue *result() const;
+};
+
+class FloatValueLittleOperatorVisitor : public FloatValueOperator {
+public:
+    explicit FloatValueLittleOperatorVisitor(FloatValue *left);
 
     void visit(IntValue *) override;
 
@@ -148,6 +170,15 @@ public:
     explicit StringValueTimesOperatorVisitor(StringValue *left);
 
     void visit(IntValue *) override;
+
+    IValue *result() const;
+};
+
+class StringValueLittleOperatorVisitor : public StringValueOperator {
+public:
+    explicit StringValueLittleOperatorVisitor(StringValue *left);
+
+    void visit(StringValue *) override;
 
     IValue *result() const;
 };

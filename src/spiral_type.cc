@@ -49,36 +49,69 @@ std::string StringValue::val() const {
     return this->_val;
 }
 
+bool IValue::isFalse() {
+    return !(this->isTrue());
+}
+
 // Base operator (when no appropriate operator between types)
-IValue * IValue::operator+(IValue &obj) {
+IValue *IValue::operator+(IValue &obj) {
     this->operator_plus_error(obj);
     return spiral::null_val;
 }
 
-IValue * IValue::operator-(IValue &obj) {
+IValue *IValue::operator-(IValue &obj) {
     this->operator_minus_error(obj);
     return spiral::null_val;
 }
 
-IValue * IValue::operator*(IValue &obj) {
+IValue *IValue::operator*(IValue &obj) {
     this->operator_times_error(obj);
     return spiral::null_val;
 }
 
+bool IValue::operator>(IValue &obj) {
+    return obj < (*this);
+}
+
+bool IValue::operator<=(IValue &obj) {
+    return !(obj < (*this));
+}
+
+bool IValue::operator>=(IValue &obj) {
+    return !((*this) < obj);
+}
+
+bool IValue::operator==(IValue &obj) {
+    return !((*this) < obj) && !(obj < (*this));
+}
+
+bool IValue::operator!=(IValue &obj) {
+    return (*this) < obj || obj < (*this);
+}
+
+
 void IValue::operator_plus_error(IValue &obj) {
-    throw std::runtime_error("Unsupported operator :(" + this->type_name + " + " + obj.type_name + ")");
+    throw std::runtime_error("Unsupported operator :(" + this->type() + " + " + obj.type() + ")");
 }
 
 void IValue::operator_minus_error(IValue &obj) {
-    throw std::runtime_error("Unsupported operator :(" + this->type_name + " - " + obj.type_name + ")");
+    throw std::runtime_error("Unsupported operator :(" + this->type() + " - " + obj.type() + ")");
 }
 
 void IValue::operator_times_error(IValue &obj) {
-    throw std::runtime_error("Unsupported operator :(" + this->type_name + " * " + obj.type_name + ")");
+    throw std::runtime_error("Unsupported operator :(" + this->type() + " * " + obj.type() + ")");
+}
+
+void IValue::operator_compare_error(IValue &obj) {
+    throw std::runtime_error("Comparisons between " + this->type() + " and " + obj.type() + " are not supported!");
 }
 
 
 // Int operator
+bool IntValue::isTrue() {
+    return this->_val != 0;
+}
+
 IValue *IntValue::operator+(IValue &obj) {
     IntValuePlusOperatorVisitor vis(this);
     obj.accept(&vis);
@@ -97,7 +130,17 @@ IValue *IntValue::operator*(IValue &obj) {
     return vis.result();
 }
 
+bool IntValue::operator<(IValue &obj) {
+    IntValueLittleOperatorVisitor vis(this);
+    obj.accept(&vis);
+    return vis.result()->isTrue();
+}
+
 // Float operator
+bool FloatValue::isTrue() {
+    return this->_val != 0.0;
+}
+
 IValue *FloatValue::operator+(IValue &obj) {
     FloatValuePlusOperatorVisitor vis(this);
     obj.accept(&vis);
@@ -116,7 +159,17 @@ IValue *FloatValue::operator*(IValue &obj) {
     return vis.result();
 }
 
+bool FloatValue::operator<(IValue &obj) {
+    FloatValueLittleOperatorVisitor vis(this);
+    obj.accept(&vis);
+    return vis.result()->isTrue();
+}
+
 // String operator
+bool StringValue::isTrue() {
+    return !(this->_val.empty());
+}
+
 IValue *StringValue::operator+(IValue &obj) {
     StringValuePlusOperatorVisitor vis(this);
     obj.accept(&vis);
@@ -127,6 +180,12 @@ IValue *StringValue::operator*(IValue &obj) {
     StringValueTimesOperatorVisitor vis(this);
     obj.accept(&vis);
     return vis.result();
+}
+
+bool StringValue::operator<(IValue &obj) {
+    StringValueLittleOperatorVisitor vis(this);
+    obj.accept(&vis);
+    return vis.result()->isTrue();
 }
 
 } // namespace spiral;

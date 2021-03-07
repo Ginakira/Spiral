@@ -33,6 +33,7 @@ FactoryHandler *FactoryHandler::get() {
         head = new PrintFactoryHandler();
         head->next = new ExprFactoryHandler();
         head->next->next = new BlockFactoryHandler();
+        head->next->next->next = new ConditionFactoryHandler();
     }
     return head;
 }
@@ -85,12 +86,34 @@ void BlockFactoryHandler::handle(ASTree &tree) {
     tree.factory = BlockFactoryHandler::factory;
 }
 
+bool ConditionFactoryHandler::is_valid(ASTree &tree) {
+    switch (tree.type()) {
+        case OR:
+        case AND:
+        case EQ:
+        case NE:
+        case GT:
+        case GE:
+        case LITTLE:
+        case LE:
+            return true;
+        default:
+            return false;
+    }
+}
+
+void ConditionFactoryHandler::handle(ASTree &tree) {
+    tree.factory = ConditionFactoryHandler::factory;
+}
+
 
 PrintFactory *PrintFactoryHandler::factory = new PrintFactory();
 
 ExprFactory *ExprFactoryHandler::factory = new ExprFactory();
 
 BlockFactory *BlockFactoryHandler::factory = new BlockFactory();
+
+ConditionFactory *ConditionFactoryHandler::factory = new ConditionFactory();
 
 FactoryHandler *FactoryHandler::head = nullptr;
 

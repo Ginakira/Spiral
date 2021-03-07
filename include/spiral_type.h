@@ -32,17 +32,36 @@ public:
 
     virtual void accept(IVisitor *) = 0;
 
+    virtual bool isTrue() = 0;
+
+    virtual bool isFalse();
+
     virtual IValue *operator+(IValue &);
 
     virtual IValue *operator-(IValue &);
 
     virtual IValue *operator*(IValue &);
 
+    virtual bool operator<(IValue &) = 0;
+
+    virtual bool operator>(IValue &);
+
+    virtual bool operator<=(IValue &);
+
+    virtual bool operator>=(IValue &);
+
+    virtual bool operator==(IValue &);
+
+    virtual bool operator!=(IValue &);
+
+
     void operator_plus_error(IValue &);
 
     void operator_minus_error(IValue &);
 
     void operator_times_error(IValue &);
+
+    void operator_compare_error(IValue &);
 
     virtual ~IValue() = default;
 
@@ -58,11 +77,15 @@ public:
 
     int val() const;
 
+    bool isTrue() override;
+
     IValue *operator+(IValue &) override;
 
     IValue *operator-(IValue &) override;
 
     IValue *operator*(IValue &) override;
+
+    bool operator<(IValue &) override;
 
 private:
     int _val;
@@ -76,11 +99,16 @@ public:
 
     double val() const;
 
+    bool isTrue() override;
+
     IValue *operator+(IValue &) override;
 
     IValue *operator-(IValue &) override;
 
     IValue *operator*(IValue &) override;
+
+    bool operator<(IValue &) override;
+
 
 private:
     double _val;
@@ -94,15 +122,22 @@ public:
 
     std::string val() const;
 
+    bool isTrue() override;
+
     IValue *operator+(IValue &) override;
 
     IValue *operator*(IValue &) override;
+
+    bool operator<(IValue &) override;
+
 
 private:
     std::string _val;
 };
 
 static IntValue *null_val = new IntValue(0);
+static IntValue *true_val = new IntValue(1);
+static IntValue *false_val = new IntValue(0);
 
 } // namespace spiral
 

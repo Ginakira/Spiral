@@ -3,6 +3,8 @@
 //
 
 #include <cstdio>
+#include <spiral_master.h>
+
 
 #include "SpiralParser.h"
 
@@ -21,6 +23,8 @@ PrintMaster::PrintMaster(ASTree &tree, Parameter *p) : IMaster(tree, p) {}
 ExprMaster::ExprMaster(ASTree &tree, Parameter *p) : IMaster(tree, p) {}
 
 BlockMaster::BlockMaster(ASTree &tree, Parameter *p) : IMaster(tree, p) {}
+
+ConditionMaster::ConditionMaster(ASTree &tree, Parameter *p) : IMaster(tree, p) {}
 
 void IMaster::IFactory::destroy(IMaster *m) {
     delete m;
@@ -117,5 +121,59 @@ IValue *BlockMaster::run() {
     return spiral::null_val;
 }
 
+IValue *ConditionMaster::run() {
+    switch (this->tree.type()) {
+        case OR: {
+            IValue *a = RuntimeEnv::getValue(this->tree.at(0), this->p);
+            if (a->isTrue()) {
+                return spiral::true_val;
+            }
+            IValue *b = RuntimeEnv::getValue(this->tree.at(1), this->p);
+            return b->isTrue() ? spiral::true_val : spiral::false_val;
+        }
+        case AND: {
+            IValue *a = RuntimeEnv::getValue(this->tree.at(0), this->p);
+            if (a->isFalse()) {
+                return spiral::false_val;
+            }
+            IValue *b = RuntimeEnv::getValue(this->tree.at(1), this->p);
+            return b->isTrue() ? spiral::true_val : spiral::false_val;
+        }
+        case EQ: {
+            IValue *a = RuntimeEnv::getValue(this->tree.at(0), this->p);
+            IValue *b = RuntimeEnv::getValue(this->tree.at(1), this->p);
+            return (*a) == (*b) ? spiral::true_val : spiral::false_val;
+        }
+        case NE: {
+            IValue *a = RuntimeEnv::getValue(this->tree.at(0), this->p);
+            IValue *b = RuntimeEnv::getValue(this->tree.at(1), this->p);
+            return (*a) != (*b) ? spiral::true_val : spiral::false_val;
+        }
+        case GT: {
+            IValue *a = RuntimeEnv::getValue(this->tree.at(0), this->p);
+            IValue *b = RuntimeEnv::getValue(this->tree.at(1), this->p);
+            return (*a) > (*b) ? spiral::true_val : spiral::false_val;
+        }
+        case GE: {
+            IValue *a = RuntimeEnv::getValue(this->tree.at(0), this->p);
+            IValue *b = RuntimeEnv::getValue(this->tree.at(1), this->p);
+            return (*a) >= (*b) ? spiral::true_val : spiral::false_val;
+        }
+        case LITTLE: {
+            IValue *a = RuntimeEnv::getValue(this->tree.at(0), this->p);
+            IValue *b = RuntimeEnv::getValue(this->tree.at(1), this->p);
+            return (*a) < (*b) ? spiral::true_val : spiral::false_val;
+        }
+        case LE: {
+            IValue *a = RuntimeEnv::getValue(this->tree.at(0), this->p);
+            IValue *b = RuntimeEnv::getValue(this->tree.at(1), this->p);
+            return (*a) <= (*b) ? spiral::true_val : spiral::false_val;
+        }
+        default: {
+            throw std::runtime_error("Tree type is not condition. ConditionMaster::run()");
+        }
+    }
+    return spiral::false_val;
+}
 
 } // namespace spiral

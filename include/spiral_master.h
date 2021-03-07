@@ -38,8 +38,6 @@ public:
     PrintMaster(ASTree &, Parameter *);
 
     IValue *run() override;
-
-private:
 };
 
 class ExprMaster : public IMaster {
@@ -47,8 +45,6 @@ public:
     ExprMaster(ASTree &, Parameter *);
 
     IValue *run() override;
-
-private:
 };
 
 class BlockMaster : public IMaster {
@@ -56,8 +52,13 @@ public:
     BlockMaster(ASTree &, Parameter *);
 
     IValue *run() override;
+};
 
-private:
+class ConditionMaster : public IMaster {
+public:
+    ConditionMaster(ASTree &, Parameter *);
+
+    IValue *run() override;
 };
 
 } // namespace spiral

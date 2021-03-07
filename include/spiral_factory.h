@@ -21,6 +21,10 @@ class BlockFactory : public IMaster::IFactory {
     IMaster *create(ASTree &, Parameter *) override;
 };
 
+class ConditionFactory : public IMaster::IFactory {
+    IMaster *create(ASTree &, Parameter *) override;
+};
+
 } // namespace spiral
 
 #endif //SPIRAL_SPIRAL_FACTORY_H

@@ -18,4 +18,7 @@ IMaster *BlockFactory::create(ASTree &tree, Parameter *p) {
     return new BlockMaster(tree, p);
 }
 
+IMaster *ConditionFactory::create(ASTree &tree, Parameter *p) {
+    return new ConditionMaster(tree, p);
+}
 } // namespace spiral

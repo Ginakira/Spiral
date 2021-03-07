@@ -11,5 +11,12 @@
     }
     print a;
     print "spiral\n" * 3;
-    print a;
+    print 123 < 234;
+    print 234 < 123;
+    print "abc" < "cdf";
+    print 123 != 123;
+    print 123 == 123;
+    print 234 >= 233;
+    print 123 != 3456;
+    print 4325 <= 1234;
 }

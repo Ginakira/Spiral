@@ -88,6 +88,22 @@ IValue *IntValueTimesOperatorVisitor::result() const {
     return this->_result;
 }
 
+// Int Little
+IntValueLittleOperatorVisitor::IntValueLittleOperatorVisitor(IntValue *left)
+        : IntValueOperator(left, &IValue::operator_compare_error) {}
+
+void IntValueLittleOperatorVisitor::visit(IntValue *obj) {
+    this->_result = (left->val() < obj->val()) ? spiral::true_val : spiral::false_val;
+}
+
+void IntValueLittleOperatorVisitor::visit(FloatValue *obj) {
+    this->_result = (left->val() < obj->val()) ? spiral::true_val : spiral::false_val;
+}
+
+IValue *IntValueLittleOperatorVisitor::result() const {
+    return this->_result;
+}
+
 
 // Float operators
 // Float plus
@@ -138,6 +154,22 @@ IValue *FloatValueTimesOperatorVisitor::result() const {
     return this->_result;
 }
 
+// Float Little
+FloatValueLittleOperatorVisitor::FloatValueLittleOperatorVisitor(FloatValue *left)
+        : FloatValueOperator(left, &IValue::operator_compare_error) {}
+
+void FloatValueLittleOperatorVisitor::visit(IntValue *obj) {
+    this->_result = (left->val() < obj->val()) ? spiral::true_val : spiral::false_val;
+}
+
+void FloatValueLittleOperatorVisitor::visit(FloatValue *obj) {
+    this->_result = (left->val() < obj->val()) ? spiral::true_val : spiral::false_val;
+}
+
+IValue *FloatValueLittleOperatorVisitor::result() const {
+    return this->_result;
+}
+
 
 // String operators
 // String plus
@@ -178,6 +210,18 @@ void StringValueTimesOperatorVisitor::visit(IntValue *obj) {
 }
 
 IValue *StringValueTimesOperatorVisitor::result() const {
+    return this->_result;
+}
+
+// String Little
+StringValueLittleOperatorVisitor::StringValueLittleOperatorVisitor(StringValue *left)
+        : StringValueOperator(left, &IValue::operator_compare_error) {}
+
+void StringValueLittleOperatorVisitor::visit(StringValue *obj) {
+    this->_result = (left->val() < obj->val()) ? spiral::true_val : spiral::false_val;
+}
+
+IValue *StringValueLittleOperatorVisitor::result() const {
     return this->_result;
 }
 

@@ -15,6 +15,8 @@ class ExprFactory;
 
 class BlockFactory;
 
+class ConditionFactory;
+
 class FactoryHandler {
 public:
     static void init_factory(ASTree &);
@@ -60,6 +62,17 @@ public:
 private:
     static BlockFactory *factory;
 };
+
+class ConditionFactoryHandler : public FactoryHandler {
+public:
+    bool is_valid(ASTree &) override;
+
+    void handle(ASTree &) override;
+
+private:
+    static ConditionFactory *factory;
+};
+
 
 } // namespace spiral
 
