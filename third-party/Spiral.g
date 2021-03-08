@@ -50,10 +50,12 @@ while_expr
 init_expr
     : defid_expr -> ^(DEF defid_expr)
     | ID ASSIGN expr -> ^(ASSIGN ID expr)
+    | -> ^(NOPE)
     ;
 
 for_do_expr
     : ID ASSIGN expr -> ^(ASSIGN ID expr)
+    | -> ^(NOPE)
     ;
 
 condition_expr: andExpr (OR^ andExpr)*
@@ -64,6 +66,7 @@ cmp_atom: cond_atom ((GT^ | LITTLE^ | EQ^ | GE^ | LE^ | NE^) cond_atom)?
     ;
 cond_atom
     : expr
+    | -> ^(NOPE)
     ;
 
 block: block_expr -> ^(BLOCK block_expr);
@@ -127,6 +130,7 @@ DOT : ',';
 ASSIGN: '=';
 BLOCK: '{}';
 DEF: 'def';
+NOPE: 'NOPE';
 
 INT :	'-'? '0'..'9' +
     ;

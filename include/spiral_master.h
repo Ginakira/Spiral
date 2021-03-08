@@ -61,6 +61,13 @@ public:
     IValue *run() override;
 };
 
+
+class ControlMaster : public IMaster {
+public:
+    ControlMaster(ASTree &, Parameter *);
+
+    IValue *run() override;
+};
 } // namespace spiral
 
 

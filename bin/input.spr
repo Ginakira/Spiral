@@ -1,22 +1,21 @@
 {
-    print "a" * 2;
-    def a = 234, b = 234.566;
-    a = a + b;
-    print a;
-    print "a" + 324;
-    {
-        def a = 123;
-        print a;
-        print a + b;
+    if (123 == 123) {
+        print "yes";
+    } else {
+        print "no";
     }
-    print a;
-    print "spiral\n" * 3;
-    print 123 < 234;
-    print 234 < 123;
-    print "abc" < "cdf";
-    print 123 != 123;
-    print 123 == 123;
-    print 234 >= 233;
-    print 123 != 3456;
-    print 4325 <= 1234;
+
+    def a = 1;
+    while (a <= 10) {
+        print a;
+        a = a + 1;
+    }
+    do {
+        print a;
+        a = a - 1;
+    } while (a >= 1);
+
+    for (def a = 1; a <= 10; a = a + 1) {
+        print a;
+    }
 }

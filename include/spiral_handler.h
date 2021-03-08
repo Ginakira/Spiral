@@ -17,6 +17,8 @@ class BlockFactory;
 
 class ConditionFactory;
 
+class ControlFactory;
+
 class FactoryHandler {
 public:
     static void init_factory(ASTree &);
@@ -71,6 +73,16 @@ public:
 
 private:
     static ConditionFactory *factory;
+};
+
+class ControlFactoryHandler : public FactoryHandler {
+public:
+    bool is_valid(ASTree &) override;
+
+    void handle(ASTree &) override;
+
+private:
+    static ControlFactory *factory;
 };
 
 

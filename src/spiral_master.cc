@@ -5,9 +5,6 @@
 #include <cstdio>
 #include <spiral_master.h>
 
-
-#include "SpiralParser.h"
-
 #include "spiral_runtime.h"
 #include "spiral_parameter.h"
 #include "spiral_visitor.h"
@@ -25,6 +22,8 @@ ExprMaster::ExprMaster(ASTree &tree, Parameter *p) : IMaster(tree, p) {}
 BlockMaster::BlockMaster(ASTree &tree, Parameter *p) : IMaster(tree, p) {}
 
 ConditionMaster::ConditionMaster(ASTree &tree, Parameter *p) : IMaster(tree, p) {}
+
+ControlMaster::ControlMaster(ASTree &tree, Parameter *p) : IMaster(tree, p) {}
 
 void IMaster::IFactory::destroy(IMaster *m) {
     delete m;
@@ -102,10 +101,12 @@ IValue *ExprMaster::run() {
             }
             return spiral::null_val;
         }
+        case NOPE: {
+            return spiral::true_val;
+        }
         default:
             throw std::runtime_error("Tree type is not expr. ExprMaster::run()");
     }
-    return spiral::null_val;
 }
 
 IValue *BlockMaster::run() {
@@ -173,7 +174,44 @@ IValue *ConditionMaster::run() {
             throw std::runtime_error("Tree type is not condition. ConditionMaster::run()");
         }
     }
-    return spiral::false_val;
+}
+
+IValue *ControlMaster::run() {
+    switch (this->tree.type()) {
+        case IF: {
+            IValue *condition_val = RuntimeEnv::getValue(this->tree.at(0), this->p);
+            if (condition_val->isTrue()) {
+                RuntimeEnv::getValue(this->tree.at(1), this->p);
+            } else if (this->tree.size() == 3) {
+                RuntimeEnv::getValue(this->tree.at(2), this->p);
+            }
+            return spiral::null_val;
+        }
+        case FOR: {
+            this->p = new Parameter(p);
+            for (RuntimeEnv::getValue(this->tree.at(0), this->p);
+                 RuntimeEnv::getValue(this->tree.at(1), this->p)->isTrue();
+                 RuntimeEnv::getValue(this->tree.at(2), this->p)) {
+                RuntimeEnv::getValue(this->tree.at(3), this->p);
+            }
+            this->p = this->p->next();
+            return spiral::null_val;
+        }
+        case WHILE: {
+            while (RuntimeEnv::getValue(this->tree.at(0), this->p)->isTrue()) {
+                RuntimeEnv::getValue(this->tree.at(1), this->p);
+            }
+            return spiral::null_val;
+        }
+        case DOWHILE: {
+            do {
+                RuntimeEnv::getValue(this->tree.at(1), this->p);
+            } while (RuntimeEnv::getValue(this->tree.at(0), this->p)->isTrue());
+            return spiral::null_val;
+        }
+        default:
+            throw std::runtime_error("Tree type is not control. ControlMaster::run()");
+    }
 }
 
 } // namespace spiral

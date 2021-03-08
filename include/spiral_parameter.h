@@ -25,10 +25,11 @@ public:
 
     void *set(const string &, IValue *);
 
+    Parameter *next() const;
 
 private:
     mutable map<string, IValue *> memory;
-    Parameter *next;
+    Parameter *_next;
 };
 
 } // namespace spiral
