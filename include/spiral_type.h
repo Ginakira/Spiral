@@ -7,13 +7,9 @@
 
 #include <string>
 
+#include "spiral_shared_type.h"
+
 namespace spiral {
-
-class IntValue;
-
-class FloatValue;
-
-class StringValue;
 
 class IValue {
 public:
@@ -36,11 +32,11 @@ public:
 
     virtual bool isFalse();
 
-    virtual IValue *operator+(IValue &);
+    virtual SIValue operator+(IValue &);
 
-    virtual IValue *operator-(IValue &);
+    virtual SIValue operator-(IValue &);
 
-    virtual IValue *operator*(IValue &);
+    virtual SIValue operator*(IValue &);
 
     virtual bool operator<(IValue &) = 0;
 
@@ -79,13 +75,15 @@ public:
 
     bool isTrue() override;
 
-    IValue *operator+(IValue &) override;
+    SIValue operator+(IValue &) override;
 
-    IValue *operator-(IValue &) override;
+    SIValue operator-(IValue &) override;
 
-    IValue *operator*(IValue &) override;
+    SIValue operator*(IValue &) override;
 
     bool operator<(IValue &) override;
+
+    ~IntValue() override;
 
 private:
     int _val;
@@ -101,14 +99,15 @@ public:
 
     bool isTrue() override;
 
-    IValue *operator+(IValue &) override;
+    SIValue operator+(IValue &) override;
 
-    IValue *operator-(IValue &) override;
+    SIValue operator-(IValue &) override;
 
-    IValue *operator*(IValue &) override;
+    SIValue operator*(IValue &) override;
 
     bool operator<(IValue &) override;
 
+    ~FloatValue() override;
 
 private:
     double _val;
@@ -124,20 +123,21 @@ public:
 
     bool isTrue() override;
 
-    IValue *operator+(IValue &) override;
+    SIValue operator+(IValue &) override;
 
-    IValue *operator*(IValue &) override;
+    SIValue operator*(IValue &) override;
 
     bool operator<(IValue &) override;
 
+    ~StringValue() override;
 
 private:
     std::string _val;
 };
 
-static IntValue *null_val = new IntValue(0);
-static IntValue *true_val = new IntValue(1);
-static IntValue *false_val = new IntValue(0);
+static SIntValue null_val = std::make_shared<IntValue>(0);
+static SIntValue true_val = std::make_shared<IntValue>(1);
+static SIntValue false_val = std::make_shared<IntValue>(0);
 
 } // namespace spiral
 

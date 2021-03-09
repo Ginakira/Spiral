@@ -18,7 +18,7 @@ void Parameter::define_param(const string &name) {
     this->memory[name] = spiral::null_val;
 }
 
-IValue *Parameter::get(const string &name) const {
+SIValue Parameter::get(const string &name) const {
     if (this->memory.find(name) == this->memory.end()) {
         if (this->next() == nullptr) {
             throw std::runtime_error("Variable '" + name + "' undefined!");
@@ -28,14 +28,14 @@ IValue *Parameter::get(const string &name) const {
     return this->memory[name];
 }
 
-void *Parameter::set(const string &name, IValue *val) {
+void Parameter::set(const string &name, const SIValue& val) {
     if (this->memory.find(name) == this->memory.end()) {
         if (this->next() == nullptr) {
             throw std::runtime_error("Variable '" + name + "' undefined!");
         }
         return this->next()->set(name, val);
     }
-    return this->memory[name] = val;
+    this->memory[name] = val;
 }
 
 Parameter *Parameter::next() const {

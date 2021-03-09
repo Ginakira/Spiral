@@ -5,6 +5,8 @@
 #ifndef SPIRAL_SPIRAL_RUNTIME_H
 #define SPIRAL_SPIRAL_RUNTIME_H
 
+#include "spiral_shared_type.h"
+
 namespace spiral {
 
 class ASTree;
@@ -19,7 +21,7 @@ public:
 
     void run();
 
-    static IValue *getValue(ASTree &, Parameter *);
+    static SIValue getValue(ASTree &, Parameter *);
 
 private:
     ASTree &tree;

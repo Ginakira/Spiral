@@ -29,13 +29,13 @@ void IMaster::IFactory::destroy(IMaster *m) {
     delete m;
 }
 
-IValue *PrintMaster::run() {
+SIValue PrintMaster::run() {
     if (tree.type() != PRINT) {
         throw std::runtime_error("Tree type is not print. PrintMaster::run()");
     }
     for (int i = 0, n = this->tree.size(); i < n; ++i) {
         auto child_tree = this->tree.at(i);
-        IValue *ret = RuntimeEnv::getValue(child_tree, this->p);
+        SIValue ret = RuntimeEnv::getValue(child_tree, this->p);
         ConvertToStringVisitor vis;
         ret->accept(&vis);
         if (i) printf(" ");
@@ -45,47 +45,47 @@ IValue *PrintMaster::run() {
     return spiral::null_val;
 }
 
-IValue *ExprMaster::run() {
+SIValue ExprMaster::run() {
     switch (this->tree.type()) {
         case INT: {
             const char *s = this->tree.text().c_str();
             int val_int;
             sscanf(s, "%d", &val_int);
-            return new IntValue(val_int);
+            return std::make_shared<IntValue>(val_int);
         }
         case FLOAT: {
             const char *s = this->tree.text().c_str();
             double val_float;
             sscanf(s, "%lf", &val_float);
-            return new FloatValue(val_float);
+            return std::make_shared<FloatValue>(val_float);
         }
         case STRING: {
             // Escape character
             // eg: 'h' 'e' 'l' 'l' 'o' '\' 'n' -> 'h' 'e' 'l' 'l' 'o' '\n'
             std::string val = ConvertStringToCString(this->tree.text());
-            return new StringValue(val.substr(1, val.size() - 2));
+            return std::make_shared<StringValue>(val.substr(1, val.size() - 2));
         }
         case ID: {
             return this->p->get(this->tree.text());
         }
         case PLUS: {
-            IValue *a = RuntimeEnv::getValue(this->tree.at(0), this->p);
-            IValue *b = RuntimeEnv::getValue(this->tree.at(1), this->p);
+            SIValue a = RuntimeEnv::getValue(this->tree.at(0), this->p);
+            SIValue b = RuntimeEnv::getValue(this->tree.at(1), this->p);
             return (*a) + (*b);
         }
         case MINUS: {
-            IValue *a = RuntimeEnv::getValue(this->tree.at(0), this->p);
-            IValue *b = RuntimeEnv::getValue(this->tree.at(1), this->p);
+            SIValue a = RuntimeEnv::getValue(this->tree.at(0), this->p);
+            SIValue b = RuntimeEnv::getValue(this->tree.at(1), this->p);
             return (*a) - (*b);
         }
         case TIMES: {
-            IValue *a = RuntimeEnv::getValue(this->tree.at(0), this->p);
-            IValue *b = RuntimeEnv::getValue(this->tree.at(1), this->p);
+            SIValue a = RuntimeEnv::getValue(this->tree.at(0), this->p);
+            SIValue b = RuntimeEnv::getValue(this->tree.at(1), this->p);
             return (*a) * (*b);
         }
         case ASSIGN: {
             std::string name = tree.at(0).text();
-            IValue *val = RuntimeEnv::getValue(tree.at(1), this->p);
+            SIValue val = RuntimeEnv::getValue(tree.at(1), this->p);
             this->p->set(name, val);
             return val;
         }
@@ -93,7 +93,7 @@ IValue *ExprMaster::run() {
             for (int i = 0, n = this->tree.size(); i < n; ++i) {
                 std::string name = this->tree.at(i).text();
                 this->p->define_param(name);
-                IValue *val = spiral::null_val;
+                SIValue val = spiral::null_val;
                 if (this->tree.at(i).size() > 0) {
                     val = RuntimeEnv::getValue(this->tree.at(i).at(0), this->p);
                 }
@@ -109,7 +109,7 @@ IValue *ExprMaster::run() {
     }
 }
 
-IValue *BlockMaster::run() {
+SIValue BlockMaster::run() {
     if (tree.type() != BLOCK) {
         throw std::runtime_error("Tree type is not block. BlockMaster::run()");
     }
@@ -122,52 +122,52 @@ IValue *BlockMaster::run() {
     return spiral::null_val;
 }
 
-IValue *ConditionMaster::run() {
+SIValue ConditionMaster::run() {
     switch (this->tree.type()) {
         case OR: {
-            IValue *a = RuntimeEnv::getValue(this->tree.at(0), this->p);
+            SIValue a = RuntimeEnv::getValue(this->tree.at(0), this->p);
             if (a->isTrue()) {
                 return spiral::true_val;
             }
-            IValue *b = RuntimeEnv::getValue(this->tree.at(1), this->p);
+            SIValue b = RuntimeEnv::getValue(this->tree.at(1), this->p);
             return b->isTrue() ? spiral::true_val : spiral::false_val;
         }
         case AND: {
-            IValue *a = RuntimeEnv::getValue(this->tree.at(0), this->p);
+            SIValue a = RuntimeEnv::getValue(this->tree.at(0), this->p);
             if (a->isFalse()) {
                 return spiral::false_val;
             }
-            IValue *b = RuntimeEnv::getValue(this->tree.at(1), this->p);
+            SIValue b = RuntimeEnv::getValue(this->tree.at(1), this->p);
             return b->isTrue() ? spiral::true_val : spiral::false_val;
         }
         case EQ: {
-            IValue *a = RuntimeEnv::getValue(this->tree.at(0), this->p);
-            IValue *b = RuntimeEnv::getValue(this->tree.at(1), this->p);
+            SIValue a = RuntimeEnv::getValue(this->tree.at(0), this->p);
+            SIValue b = RuntimeEnv::getValue(this->tree.at(1), this->p);
             return (*a) == (*b) ? spiral::true_val : spiral::false_val;
         }
         case NE: {
-            IValue *a = RuntimeEnv::getValue(this->tree.at(0), this->p);
-            IValue *b = RuntimeEnv::getValue(this->tree.at(1), this->p);
+            SIValue a = RuntimeEnv::getValue(this->tree.at(0), this->p);
+            SIValue b = RuntimeEnv::getValue(this->tree.at(1), this->p);
             return (*a) != (*b) ? spiral::true_val : spiral::false_val;
         }
         case GT: {
-            IValue *a = RuntimeEnv::getValue(this->tree.at(0), this->p);
-            IValue *b = RuntimeEnv::getValue(this->tree.at(1), this->p);
+            SIValue a = RuntimeEnv::getValue(this->tree.at(0), this->p);
+            SIValue b = RuntimeEnv::getValue(this->tree.at(1), this->p);
             return (*a) > (*b) ? spiral::true_val : spiral::false_val;
         }
         case GE: {
-            IValue *a = RuntimeEnv::getValue(this->tree.at(0), this->p);
-            IValue *b = RuntimeEnv::getValue(this->tree.at(1), this->p);
+            SIValue a = RuntimeEnv::getValue(this->tree.at(0), this->p);
+            SIValue b = RuntimeEnv::getValue(this->tree.at(1), this->p);
             return (*a) >= (*b) ? spiral::true_val : spiral::false_val;
         }
         case LITTLE: {
-            IValue *a = RuntimeEnv::getValue(this->tree.at(0), this->p);
-            IValue *b = RuntimeEnv::getValue(this->tree.at(1), this->p);
+            SIValue a = RuntimeEnv::getValue(this->tree.at(0), this->p);
+            SIValue b = RuntimeEnv::getValue(this->tree.at(1), this->p);
             return (*a) < (*b) ? spiral::true_val : spiral::false_val;
         }
         case LE: {
-            IValue *a = RuntimeEnv::getValue(this->tree.at(0), this->p);
-            IValue *b = RuntimeEnv::getValue(this->tree.at(1), this->p);
+            SIValue a = RuntimeEnv::getValue(this->tree.at(0), this->p);
+            SIValue b = RuntimeEnv::getValue(this->tree.at(1), this->p);
             return (*a) <= (*b) ? spiral::true_val : spiral::false_val;
         }
         default: {
@@ -176,10 +176,10 @@ IValue *ConditionMaster::run() {
     }
 }
 
-IValue *ControlMaster::run() {
+SIValue ControlMaster::run() {
     switch (this->tree.type()) {
         case IF: {
-            IValue *condition_val = RuntimeEnv::getValue(this->tree.at(0), this->p);
+            SIValue condition_val = RuntimeEnv::getValue(this->tree.at(0), this->p);
             if (condition_val->isTrue()) {
                 RuntimeEnv::getValue(this->tree.at(1), this->p);
             } else if (this->tree.size() == 3) {

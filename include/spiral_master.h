@@ -5,6 +5,8 @@
 #ifndef SPIRAL_SPIRAL_MASTER_H
 #define SPIRAL_SPIRAL_MASTER_H
 
+#include "spiral_shared_type.h"
+
 namespace spiral {
 
 class ASTree;
@@ -24,7 +26,7 @@ public:
         virtual void destroy(IMaster *);
     };
 
-    virtual IValue *run() = 0;
+    virtual SIValue run() = 0;
 
     virtual ~IMaster() = default;
 
@@ -37,28 +39,28 @@ class PrintMaster : public IMaster {
 public:
     PrintMaster(ASTree &, Parameter *);
 
-    IValue *run() override;
+    SIValue run() override;
 };
 
 class ExprMaster : public IMaster {
 public:
     ExprMaster(ASTree &, Parameter *);
 
-    IValue *run() override;
+    SIValue run() override;
 };
 
 class BlockMaster : public IMaster {
 public:
     BlockMaster(ASTree &, Parameter *);
 
-    IValue *run() override;
+    SIValue run() override;
 };
 
 class ConditionMaster : public IMaster {
 public:
     ConditionMaster(ASTree &, Parameter *);
 
-    IValue *run() override;
+    SIValue run() override;
 };
 
 
@@ -66,7 +68,7 @@ class ControlMaster : public IMaster {
 public:
     ControlMaster(ASTree &, Parameter *);
 
-    IValue *run() override;
+    SIValue run() override;
 };
 } // namespace spiral
 

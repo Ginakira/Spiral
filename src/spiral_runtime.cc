@@ -19,9 +19,9 @@ void RuntimeEnv::run() {
     delete p;
 }
 
-IValue *RuntimeEnv::getValue(ASTree &tree, Parameter *p) {
+SIValue RuntimeEnv::getValue(ASTree &tree, Parameter *p) {
     IMaster *m = tree.factory->create(tree, p);
-    IValue *val = m->run();
+    SIValue val = m->run();
     tree.factory->destroy(m);
     return val;
 }

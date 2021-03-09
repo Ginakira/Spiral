@@ -18,6 +18,19 @@ FloatValue::FloatValue(double x) : IValue("float"), _val(x) {}
 
 StringValue::StringValue(std::string x) : IValue("string"), _val(std::move(x)) {}
 
+// destructor
+IntValue::~IntValue() {
+    printf("destructor : %d\n", val());
+}
+
+FloatValue::~FloatValue() {
+    printf("destructor : %lf\n", val());
+}
+
+StringValue::~StringValue() {
+    printf("destructor : %s\n", val().c_str());
+}
+
 
 std::string IValue::type() {
     return this->type_name;
@@ -54,17 +67,17 @@ bool IValue::isFalse() {
 }
 
 // Base operator (when no appropriate operator between types)
-IValue *IValue::operator+(IValue &obj) {
+SIValue IValue::operator+(IValue &obj) {
     this->operator_plus_error(obj);
     return spiral::null_val;
 }
 
-IValue *IValue::operator-(IValue &obj) {
+SIValue IValue::operator-(IValue &obj) {
     this->operator_minus_error(obj);
     return spiral::null_val;
 }
 
-IValue *IValue::operator*(IValue &obj) {
+SIValue IValue::operator*(IValue &obj) {
     this->operator_times_error(obj);
     return spiral::null_val;
 }
@@ -112,19 +125,19 @@ bool IntValue::isTrue() {
     return this->_val != 0;
 }
 
-IValue *IntValue::operator+(IValue &obj) {
+SIValue IntValue::operator+(IValue &obj) {
     IntValuePlusOperatorVisitor vis(this);
     obj.accept(&vis);
     return vis.result();
 }
 
-IValue *IntValue::operator-(IValue &obj) {
+SIValue IntValue::operator-(IValue &obj) {
     IntValueMinusOperatorVisitor vis(this);
     obj.accept(&vis);
     return vis.result();
 }
 
-IValue *IntValue::operator*(IValue &obj) {
+SIValue IntValue::operator*(IValue &obj) {
     IntValueTimesOperatorVisitor vis(this);
     obj.accept(&vis);
     return vis.result();
@@ -141,19 +154,19 @@ bool FloatValue::isTrue() {
     return this->_val != 0.0;
 }
 
-IValue *FloatValue::operator+(IValue &obj) {
+SIValue FloatValue::operator+(IValue &obj) {
     FloatValuePlusOperatorVisitor vis(this);
     obj.accept(&vis);
     return vis.result();
 }
 
-IValue *FloatValue::operator-(IValue &obj) {
+SIValue FloatValue::operator-(IValue &obj) {
     FloatValueMinusOperatorVisitor vis(this);
     obj.accept(&vis);
     return vis.result();
 }
 
-IValue *FloatValue::operator*(IValue &obj) {
+SIValue FloatValue::operator*(IValue &obj) {
     FloatValueTimesOperatorVisitor vis(this);
     obj.accept(&vis);
     return vis.result();
@@ -170,13 +183,13 @@ bool StringValue::isTrue() {
     return !(this->_val.empty());
 }
 
-IValue *StringValue::operator+(IValue &obj) {
+SIValue StringValue::operator+(IValue &obj) {
     StringValuePlusOperatorVisitor vis(this);
     obj.accept(&vis);
     return vis.result();
 }
 
-IValue *StringValue::operator*(IValue &obj) {
+SIValue StringValue::operator*(IValue &obj) {
     StringValueTimesOperatorVisitor vis(this);
     obj.accept(&vis);
     return vis.result();

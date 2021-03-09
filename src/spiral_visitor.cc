@@ -45,14 +45,14 @@ IntValuePlusOperatorVisitor::IntValuePlusOperatorVisitor(IntValue *left)
         : IntValueOperator(left, &IValue::operator_plus_error) {}
 
 void IntValuePlusOperatorVisitor::visit(IntValue *obj) {
-    this->_result = new IntValue(this->left->val() + obj->val());
+    this->_result = std::make_shared<IntValue>(this->left->val() + obj->val());
 }
 
 void IntValuePlusOperatorVisitor::visit(FloatValue *obj) {
-    this->_result = new FloatValue(this->left->val() + obj->val());
+    this->_result = std::make_shared<FloatValue>(this->left->val() + obj->val());
 }
 
-IValue *IntValuePlusOperatorVisitor::result() const {
+SIValue IntValuePlusOperatorVisitor::result() const {
     return this->_result;
 }
 
@@ -61,14 +61,14 @@ IntValueMinusOperatorVisitor::IntValueMinusOperatorVisitor(IntValue *left)
         : IntValueOperator(left, &IValue::operator_minus_error) {}
 
 void IntValueMinusOperatorVisitor::visit(IntValue *obj) {
-    this->_result = new IntValue(this->left->val() - obj->val());
+    this->_result = std::make_shared<IntValue>(this->left->val() - obj->val());
 }
 
 void IntValueMinusOperatorVisitor::visit(FloatValue *obj) {
-    this->_result = new FloatValue(this->left->val() - obj->val());
+    this->_result = std::make_shared<FloatValue>(this->left->val() - obj->val());
 }
 
-IValue *IntValueMinusOperatorVisitor::result() const {
+SIValue IntValueMinusOperatorVisitor::result() const {
     return this->_result;
 }
 
@@ -77,14 +77,14 @@ IntValueTimesOperatorVisitor::IntValueTimesOperatorVisitor(IntValue *left)
         : IntValueOperator(left, &IValue::operator_times_error) {}
 
 void IntValueTimesOperatorVisitor::visit(IntValue *obj) {
-    this->_result = new IntValue(this->left->val() * obj->val());
+    this->_result = std::make_shared<IntValue>(this->left->val() * obj->val());
 }
 
 void IntValueTimesOperatorVisitor::visit(FloatValue *obj) {
-    this->_result = new FloatValue(this->left->val() * obj->val());
+    this->_result = std::make_shared<FloatValue>(this->left->val() * obj->val());
 }
 
-IValue *IntValueTimesOperatorVisitor::result() const {
+SIValue IntValueTimesOperatorVisitor::result() const {
     return this->_result;
 }
 
@@ -100,7 +100,7 @@ void IntValueLittleOperatorVisitor::visit(FloatValue *obj) {
     this->_result = (left->val() < obj->val()) ? spiral::true_val : spiral::false_val;
 }
 
-IValue *IntValueLittleOperatorVisitor::result() const {
+SIValue IntValueLittleOperatorVisitor::result() const {
     return this->_result;
 }
 
@@ -111,14 +111,14 @@ FloatValuePlusOperatorVisitor::FloatValuePlusOperatorVisitor(FloatValue *left)
         : FloatValueOperator(left, &IValue::operator_plus_error) {}
 
 void FloatValuePlusOperatorVisitor::visit(IntValue *obj) {
-    this->_result = new FloatValue(this->left->val() + obj->val());
+    this->_result = std::make_shared<FloatValue>(this->left->val() + obj->val());
 }
 
 void FloatValuePlusOperatorVisitor::visit(FloatValue *obj) {
-    this->_result = new FloatValue(this->left->val() + obj->val());
+    this->_result = std::make_shared<FloatValue>(this->left->val() + obj->val());
 }
 
-IValue *FloatValuePlusOperatorVisitor::result() const {
+SIValue FloatValuePlusOperatorVisitor::result() const {
     return this->_result;
 }
 
@@ -127,14 +127,14 @@ FloatValueMinusOperatorVisitor::FloatValueMinusOperatorVisitor(FloatValue *left)
         : FloatValueOperator(left, &IValue::operator_minus_error) {}
 
 void FloatValueMinusOperatorVisitor::visit(IntValue *obj) {
-    this->_result = new FloatValue(this->left->val() - obj->val());
+    this->_result = std::make_shared<FloatValue>(this->left->val() - obj->val());
 }
 
 void FloatValueMinusOperatorVisitor::visit(FloatValue *obj) {
-    this->_result = new FloatValue(this->left->val() - obj->val());
+    this->_result = std::make_shared<FloatValue>(this->left->val() - obj->val());
 }
 
-IValue *FloatValueMinusOperatorVisitor::result() const {
+SIValue FloatValueMinusOperatorVisitor::result() const {
     return this->_result;
 }
 
@@ -143,14 +143,14 @@ FloatValueTimesOperatorVisitor::FloatValueTimesOperatorVisitor(FloatValue *left)
         : FloatValueOperator(left, &IValue::operator_times_error) {}
 
 void FloatValueTimesOperatorVisitor::visit(IntValue *obj) {
-    this->_result = new FloatValue(this->left->val() * obj->val());
+    this->_result = std::make_shared<FloatValue>(this->left->val() * obj->val());
 }
 
 void FloatValueTimesOperatorVisitor::visit(FloatValue *obj) {
-    this->_result = new FloatValue(this->left->val() * obj->val());
+    this->_result = std::make_shared<FloatValue>(this->left->val() * obj->val());
 }
 
-IValue *FloatValueTimesOperatorVisitor::result() const {
+SIValue FloatValueTimesOperatorVisitor::result() const {
     return this->_result;
 }
 
@@ -166,7 +166,7 @@ void FloatValueLittleOperatorVisitor::visit(FloatValue *obj) {
     this->_result = (left->val() < obj->val()) ? spiral::true_val : spiral::false_val;
 }
 
-IValue *FloatValueLittleOperatorVisitor::result() const {
+SIValue FloatValueLittleOperatorVisitor::result() const {
     return this->_result;
 }
 
@@ -179,20 +179,20 @@ StringValuePlusOperatorVisitor::StringValuePlusOperatorVisitor(StringValue *left
 void StringValuePlusOperatorVisitor::visit(IntValue *obj) {
     ConvertToStringVisitor vis;
     obj->accept(&vis);
-    this->_result = new StringValue(this->left->val() + vis.result());
+    this->_result = std::make_shared<StringValue>(this->left->val() + vis.result());
 }
 
 void StringValuePlusOperatorVisitor::visit(FloatValue *obj) {
     ConvertToStringVisitor vis;
     obj->accept(&vis);
-    this->_result = new StringValue(this->left->val() + vis.result());
+    this->_result = std::make_shared<StringValue>(this->left->val() + vis.result());
 }
 
 void StringValuePlusOperatorVisitor::visit(StringValue *obj) {
-    this->_result = new StringValue(this->left->val() + obj->val());
+    this->_result = std::make_shared<StringValue>(this->left->val() + obj->val());
 }
 
-IValue *StringValuePlusOperatorVisitor::result() const {
+SIValue StringValuePlusOperatorVisitor::result() const {
     return this->_result;
 }
 
@@ -206,10 +206,10 @@ void StringValueTimesOperatorVisitor::visit(IntValue *obj) {
     for (int i = 0, n = obj->val(); i < n; ++i) {
         ret += this->left->val();
     }
-    this->_result = new StringValue(ret);
+    this->_result = std::make_shared<StringValue>(ret);
 }
 
-IValue *StringValueTimesOperatorVisitor::result() const {
+SIValue StringValueTimesOperatorVisitor::result() const {
     return this->_result;
 }
 
@@ -221,7 +221,7 @@ void StringValueLittleOperatorVisitor::visit(StringValue *obj) {
     this->_result = (left->val() < obj->val()) ? spiral::true_val : spiral::false_val;
 }
 
-IValue *StringValueLittleOperatorVisitor::result() const {
+SIValue StringValueLittleOperatorVisitor::result() const {
     return this->_result;
 }
 

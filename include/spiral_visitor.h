@@ -37,7 +37,8 @@ public:
 
 protected:
     op_type op;
-    IValue *lvalue, *_result{};
+    IValue *lvalue;
+    SIValue _result;
 };
 
 class IntValueOperator : public ValueOperator {
@@ -70,7 +71,7 @@ public:
 
     void visit(FloatValue *) override;
 
-    IValue *result() const;
+    SIValue result() const;
 };
 
 class IntValueMinusOperatorVisitor : public IntValueOperator {
@@ -81,7 +82,7 @@ public:
 
     void visit(FloatValue *) override;
 
-    IValue *result() const;
+    SIValue result() const;
 };
 
 class IntValueTimesOperatorVisitor : public IntValueOperator {
@@ -92,7 +93,7 @@ public:
 
     void visit(FloatValue *) override;
 
-    IValue *result() const;
+    SIValue result() const;
 };
 
 class IntValueLittleOperatorVisitor : public IntValueOperator {
@@ -103,7 +104,7 @@ public:
 
     void visit(FloatValue *) override;
 
-    IValue *result() const;
+    SIValue result() const;
 };
 
 class FloatValuePlusOperatorVisitor : public FloatValueOperator {
@@ -114,7 +115,7 @@ public:
 
     void visit(FloatValue *) override;
 
-    IValue *result() const;
+    SIValue result() const;
 };
 
 
@@ -126,7 +127,7 @@ public:
 
     void visit(FloatValue *) override;
 
-    IValue *result() const;
+    SIValue result() const;
 };
 
 class FloatValueTimesOperatorVisitor : public FloatValueOperator {
@@ -137,7 +138,7 @@ public:
 
     void visit(FloatValue *) override;
 
-    IValue *result() const;
+    SIValue result() const;
 };
 
 class FloatValueLittleOperatorVisitor : public FloatValueOperator {
@@ -148,7 +149,7 @@ public:
 
     void visit(FloatValue *) override;
 
-    IValue *result() const;
+    SIValue result() const;
 };
 
 
@@ -162,7 +163,7 @@ public:
 
     void visit(StringValue *) override;
 
-    IValue *result() const;
+    SIValue result() const;
 };
 
 class StringValueTimesOperatorVisitor : public StringValueOperator {
@@ -171,7 +172,7 @@ public:
 
     void visit(IntValue *) override;
 
-    IValue *result() const;
+    SIValue result() const;
 };
 
 class StringValueLittleOperatorVisitor : public StringValueOperator {
@@ -180,7 +181,7 @@ public:
 
     void visit(StringValue *) override;
 
-    IValue *result() const;
+    SIValue result() const;
 };
 
 

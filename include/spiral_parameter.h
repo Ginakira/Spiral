@@ -7,13 +7,12 @@
 
 #include <map>
 #include <string>
+#include "spiral_shared_type.h"
 
 using std::map;
 using std::string;
 
 namespace spiral {
-
-class IValue;
 
 class Parameter {
 public:
@@ -21,14 +20,14 @@ public:
 
     void define_param(const string &);
 
-    IValue *get(const string &) const;
+    SIValue get(const string &) const;
 
-    void *set(const string &, IValue *);
+    void set(const string &, const SIValue& );
 
     Parameter *next() const;
 
 private:
-    mutable map<string, IValue *> memory;
+    mutable map<string, SIValue> memory;
     Parameter *_next;
 };
 
