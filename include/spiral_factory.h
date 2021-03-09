@@ -10,23 +10,23 @@
 namespace spiral {
 
 class PrintFactory : public IMaster::IFactory {
-    IMaster *create(ASTree &, Parameter *) override;
+    IMaster *create(ASTree &, SParameter) override;
 };
 
 class ExprFactory : public IMaster::IFactory {
-    IMaster *create(ASTree &, Parameter *) override;
+    IMaster *create(ASTree &, SParameter) override;
 };
 
 class BlockFactory : public IMaster::IFactory {
-    IMaster *create(ASTree &, Parameter *) override;
+    IMaster *create(ASTree &, SParameter) override;
 };
 
 class ConditionFactory : public IMaster::IFactory {
-    IMaster *create(ASTree &, Parameter *) override;
+    IMaster *create(ASTree &, SParameter) override;
 };
 
 class ControlFactory : public IMaster::IFactory {
-    IMaster *create(ASTree &, Parameter *) override;
+    IMaster *create(ASTree &, SParameter) override;
 };
 
 } // namespace spiral

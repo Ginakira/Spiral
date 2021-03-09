@@ -6,23 +6,23 @@
 
 namespace spiral {
 
-IMaster *PrintFactory::create(ASTree &tree, Parameter *p) {
+IMaster *PrintFactory::create(ASTree &tree, SParameter p) {
     return new PrintMaster(tree, p);
 }
 
-IMaster *ExprFactory::create(ASTree &tree, Parameter *p) {
+IMaster *ExprFactory::create(ASTree &tree, SParameter p) {
     return new ExprMaster(tree, p);
 }
 
-IMaster *BlockFactory::create(ASTree &tree, Parameter *p) {
+IMaster *BlockFactory::create(ASTree &tree, SParameter p) {
     return new BlockMaster(tree, p);
 }
 
-IMaster *ConditionFactory::create(ASTree &tree, Parameter *p) {
+IMaster *ConditionFactory::create(ASTree &tree, SParameter p) {
     return new ConditionMaster(tree, p);
 }
 
-IMaster *ControlFactory::create(ASTree &tree, Parameter *p) {
+IMaster *ControlFactory::create(ASTree &tree, SParameter p) {
     return new ControlMaster(tree, p);
 }
 } // namespace spiral

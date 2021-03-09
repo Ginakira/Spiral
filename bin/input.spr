@@ -5,17 +5,18 @@
         print "no";
     }
 
-    def a = 1;
-    while (a <= 10) {
-        print a;
-        a = a + 1;
+    print 123 + 123;
+    print 234 - 234;
+    print 234 * 2314;
+    print "a " * 5;
+
+    for (def i = 0; i < 5; i = i + 1) {
+        print i;
     }
-    do {
+
+    def a = 5;
+    while (a >= 0) {
         print a;
         a = a - 1;
-    } while (a >= 1);
-
-    for (def a = 1; a <= 10; a = a + 1) {
-        print a;
     }
 }

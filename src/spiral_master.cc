@@ -3,6 +3,7 @@
 //
 
 #include <cstdio>
+#include <utility>
 #include <spiral_master.h>
 
 #include "spiral_runtime.h"
@@ -13,17 +14,17 @@
 
 namespace spiral {
 
-IMaster::IMaster(ASTree &tree, Parameter *p) : tree(tree), p(p) {}
+IMaster::IMaster(ASTree &tree, SParameter p) : tree(tree), p(std::move(p)) {}
 
-PrintMaster::PrintMaster(ASTree &tree, Parameter *p) : IMaster(tree, p) {}
+PrintMaster::PrintMaster(ASTree &tree, SParameter p) : IMaster(tree, std::move(p)) {}
 
-ExprMaster::ExprMaster(ASTree &tree, Parameter *p) : IMaster(tree, p) {}
+ExprMaster::ExprMaster(ASTree &tree, SParameter p) : IMaster(tree, std::move(p)) {}
 
-BlockMaster::BlockMaster(ASTree &tree, Parameter *p) : IMaster(tree, p) {}
+BlockMaster::BlockMaster(ASTree &tree, SParameter p) : IMaster(tree, std::move(p)) {}
 
-ConditionMaster::ConditionMaster(ASTree &tree, Parameter *p) : IMaster(tree, p) {}
+ConditionMaster::ConditionMaster(ASTree &tree, SParameter p) : IMaster(tree, std::move(p)) {}
 
-ControlMaster::ControlMaster(ASTree &tree, Parameter *p) : IMaster(tree, p) {}
+ControlMaster::ControlMaster(ASTree &tree, SParameter p) : IMaster(tree, std::move(p)) {}
 
 void IMaster::IFactory::destroy(IMaster *m) {
     delete m;
@@ -113,12 +114,12 @@ SIValue BlockMaster::run() {
     if (tree.type() != BLOCK) {
         throw std::runtime_error("Tree type is not block. BlockMaster::run()");
     }
-    auto *new_p = new Parameter(this->p);
+    this->p = std::make_shared<Parameter>(this->p);
     for (int i = 0, n = this->tree.size(); i < n; ++i) {
         auto child_tree = this->tree.at(i);
-        RuntimeEnv::getValue(child_tree, new_p);
+        RuntimeEnv::getValue(child_tree, this->p);
     }
-    delete new_p;
+    this->p = this->p->next();
     return spiral::null_val;
 }
 
@@ -188,7 +189,7 @@ SIValue ControlMaster::run() {
             return spiral::null_val;
         }
         case FOR: {
-            this->p = new Parameter(p);
+            this->p = std::make_shared<Parameter>(this->p);
             for (RuntimeEnv::getValue(this->tree.at(0), this->p);
                  RuntimeEnv::getValue(this->tree.at(1), this->p)->isTrue();
                  RuntimeEnv::getValue(this->tree.at(2), this->p)) {

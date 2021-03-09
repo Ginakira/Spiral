@@ -20,15 +20,15 @@ StringValue::StringValue(std::string x) : IValue("string"), _val(std::move(x)) {
 
 // destructor
 IntValue::~IntValue() {
-    printf("destructor : %d\n", val());
+//    printf("destructor : %d\n", val());
 }
 
 FloatValue::~FloatValue() {
-    printf("destructor : %lf\n", val());
+//    printf("destructor : %lf\n", val());
 }
 
 StringValue::~StringValue() {
-    printf("destructor : %s\n", val().c_str());
+//    printf("destructor : %s\n", val().c_str());
 }
 
 

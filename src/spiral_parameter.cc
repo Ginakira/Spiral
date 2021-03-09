@@ -3,13 +3,14 @@
 //
 
 #include <stdexcept>
+#include <utility>
 
 #include "spiral_parameter.h"
 #include "spiral_type.h"
 
 namespace spiral {
 
-Parameter::Parameter(Parameter *next) : _next(next) {}
+Parameter::Parameter(SParameter next) : _next(std::move(next)) {}
 
 void Parameter::define_param(const string &name) {
     if (this->memory.find(name) != this->memory.end()) {
@@ -28,7 +29,7 @@ SIValue Parameter::get(const string &name) const {
     return this->memory[name];
 }
 
-void Parameter::set(const string &name, const SIValue& val) {
+void Parameter::set(const string &name, const SIValue &val) {
     if (this->memory.find(name) == this->memory.end()) {
         if (this->next() == nullptr) {
             throw std::runtime_error("Variable '" + name + "' undefined!");
@@ -38,7 +39,7 @@ void Parameter::set(const string &name, const SIValue& val) {
     this->memory[name] = val;
 }
 
-Parameter *Parameter::next() const {
+SParameter Parameter::next() const {
     return this->_next;
 }
 

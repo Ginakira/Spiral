@@ -16,19 +16,19 @@ namespace spiral {
 
 class Parameter {
 public:
-    explicit Parameter(Parameter *next = nullptr);
+    explicit Parameter(SParameter next);
 
     void define_param(const string &);
 
     SIValue get(const string &) const;
 
-    void set(const string &, const SIValue& );
+    void set(const string &, const SIValue &);
 
-    Parameter *next() const;
+    SParameter next() const;
 
 private:
     mutable map<string, SIValue> memory;
-    Parameter *_next;
+    SParameter _next;
 };
 
 } // namespace spiral

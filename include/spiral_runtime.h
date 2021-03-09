@@ -21,7 +21,7 @@ public:
 
     void run();
 
-    static SIValue getValue(ASTree &, Parameter *);
+    static SIValue getValue(ASTree &, SParameter);
 
 private:
     ASTree &tree;
