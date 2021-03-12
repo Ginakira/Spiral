@@ -38,6 +38,10 @@ public:
 
     virtual SIValue operator*(IValue &);
 
+    virtual SIValue operator/(IValue &);
+
+    virtual SIValue operator%(IValue &);
+
     virtual bool operator<(IValue &) = 0;
 
     virtual bool operator>(IValue &);
@@ -56,6 +60,10 @@ public:
     void operator_minus_error(IValue &);
 
     void operator_times_error(IValue &);
+
+    void operator_div_error(IValue &);
+
+    void operator_mod_error(IValue &);
 
     void operator_compare_error(IValue &);
 
@@ -81,6 +89,10 @@ public:
 
     SIValue operator*(IValue &) override;
 
+    SIValue operator/(IValue &) override;
+
+    SIValue operator%(IValue &) override;
+
     bool operator<(IValue &) override;
 
     ~IntValue() override;
@@ -104,6 +116,8 @@ public:
     SIValue operator-(IValue &) override;
 
     SIValue operator*(IValue &) override;
+
+    SIValue operator/(IValue &) override;
 
     bool operator<(IValue &) override;
 

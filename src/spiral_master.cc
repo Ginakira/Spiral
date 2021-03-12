@@ -84,6 +84,16 @@ SIValue ExprMaster::run() {
             SIValue b = RuntimeEnv::getValue(this->tree.at(1), this->p);
             return (*a) * (*b);
         }
+        case DIV: {
+            SIValue a = RuntimeEnv::getValue(this->tree.at(0), this->p);
+            SIValue b = RuntimeEnv::getValue(this->tree.at(1), this->p);
+            return (*a) / (*b);
+        }
+        case MOD: {
+            SIValue a = RuntimeEnv::getValue(this->tree.at(0), this->p);
+            SIValue b = RuntimeEnv::getValue(this->tree.at(1), this->p);
+            return (*a) % (*b);
+        }
         case ASSIGN: {
             std::string name = tree.at(0).text();
             SIValue val = RuntimeEnv::getValue(tree.at(1), this->p);

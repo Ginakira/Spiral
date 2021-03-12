@@ -82,6 +82,16 @@ SIValue IValue::operator*(IValue &obj) {
     return spiral::null_val;
 }
 
+SIValue IValue::operator/(IValue &obj) {
+    this->operator_div_error(obj);
+    return spiral::null_val;
+}
+
+SIValue IValue::operator%(IValue &obj) {
+    this->operator_mod_error(obj);
+    return spiral::null_val;
+}
+
 bool IValue::operator>(IValue &obj) {
     return obj < (*this);
 }
@@ -115,6 +125,14 @@ void IValue::operator_times_error(IValue &obj) {
     throw std::runtime_error("Unsupported operator :(" + this->type() + " * " + obj.type() + ")");
 }
 
+void IValue::operator_div_error(IValue &obj) {
+    throw std::runtime_error("Unsupported operator :(" + this->type() + " / " + obj.type() + ")");
+}
+
+void IValue::operator_mod_error(IValue &obj) {
+    throw std::runtime_error("Unsupported operator :(" + this->type() + " % " + obj.type() + ")");
+}
+
 void IValue::operator_compare_error(IValue &obj) {
     throw std::runtime_error("Comparisons between " + this->type() + " and " + obj.type() + " are not supported!");
 }
@@ -139,6 +157,18 @@ SIValue IntValue::operator-(IValue &obj) {
 
 SIValue IntValue::operator*(IValue &obj) {
     IntValueTimesOperatorVisitor vis(this);
+    obj.accept(&vis);
+    return vis.result();
+}
+
+SIValue IntValue::operator/(IValue &obj) {
+    IntValueDivOperatorVisitor vis(this);
+    obj.accept(&vis);
+    return vis.result();
+}
+
+SIValue IntValue::operator%(IValue &obj) {
+    IntValueModOperatorVisitor vis(this);
     obj.accept(&vis);
     return vis.result();
 }
@@ -168,6 +198,12 @@ SIValue FloatValue::operator-(IValue &obj) {
 
 SIValue FloatValue::operator*(IValue &obj) {
     FloatValueTimesOperatorVisitor vis(this);
+    obj.accept(&vis);
+    return vis.result();
+}
+
+SIValue FloatValue::operator/(IValue &obj) {
+    FloatValueDivOperatorVisitor vis(this);
     obj.accept(&vis);
     return vis.result();
 }

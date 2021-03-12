@@ -61,6 +61,8 @@ bool ExprFactoryHandler::is_valid(ASTree &tree) {
         case PLUS:
         case MINUS:
         case TIMES:
+        case DIV:
+        case MOD:
         case ASSIGN:
         case DEF:
         case NOPE:

@@ -96,6 +96,26 @@ public:
     SIValue result() const;
 };
 
+class IntValueDivOperatorVisitor : public IntValueOperator {
+public:
+    explicit IntValueDivOperatorVisitor(IntValue *left);
+
+    void visit(IntValue *) override;
+
+    void visit(FloatValue *) override;
+
+    SIValue result() const;
+};
+
+class IntValueModOperatorVisitor : public IntValueOperator {
+public:
+    explicit IntValueModOperatorVisitor(IntValue *left);
+
+    void visit(IntValue *) override;
+
+    SIValue result() const;
+};
+
 class IntValueLittleOperatorVisitor : public IntValueOperator {
 public:
     explicit IntValueLittleOperatorVisitor(IntValue *left);
@@ -133,6 +153,17 @@ public:
 class FloatValueTimesOperatorVisitor : public FloatValueOperator {
 public:
     explicit FloatValueTimesOperatorVisitor(FloatValue *left);
+
+    void visit(IntValue *) override;
+
+    void visit(FloatValue *) override;
+
+    SIValue result() const;
+};
+
+class FloatValueDivOperatorVisitor : public FloatValueOperator {
+public:
+    explicit FloatValueDivOperatorVisitor(FloatValue *left);
 
     void visit(IntValue *) override;
 

@@ -88,6 +88,44 @@ SIValue IntValueTimesOperatorVisitor::result() const {
     return this->_result;
 }
 
+// Int Div
+IntValueDivOperatorVisitor::IntValueDivOperatorVisitor(IntValue *left)
+        : IntValueOperator(left, &IValue::operator_div_error) {}
+
+void IntValueDivOperatorVisitor::visit(IntValue *obj) {
+    if (obj->val() == 0) {
+        throw std::runtime_error("Division by zero, left value is " + std::to_string(this->left->val()));
+    }
+    this->_result = std::make_shared<IntValue>(this->left->val() / obj->val());
+}
+
+void IntValueDivOperatorVisitor::visit(FloatValue *obj) {
+    if (obj->val() == 0.0) {
+        throw std::runtime_error("Division by zero, left value is " + std::to_string(this->left->val()));
+    }
+    this->_result = std::make_shared<FloatValue>(this->left->val() / obj->val());
+}
+
+SIValue IntValueDivOperatorVisitor::result() const {
+    return this->_result;
+}
+
+// Int Mod
+IntValueModOperatorVisitor::IntValueModOperatorVisitor(IntValue *left)
+        : IntValueOperator(left, &IValue::operator_mod_error) {}
+
+void IntValueModOperatorVisitor::visit(IntValue *obj) {
+    if (obj->val() == 0) {
+        throw std::runtime_error("Mod by zero, left value is " + std::to_string(this->left->val()));
+    }
+    this->_result = std::make_shared<IntValue>(this->left->val() % obj->val());
+}
+
+
+SIValue IntValueModOperatorVisitor::result() const {
+    return this->_result;
+}
+
 // Int Little
 IntValueLittleOperatorVisitor::IntValueLittleOperatorVisitor(IntValue *left)
         : IntValueOperator(left, &IValue::operator_compare_error) {}
@@ -151,6 +189,28 @@ void FloatValueTimesOperatorVisitor::visit(FloatValue *obj) {
 }
 
 SIValue FloatValueTimesOperatorVisitor::result() const {
+    return this->_result;
+}
+
+// Float Div
+FloatValueDivOperatorVisitor::FloatValueDivOperatorVisitor(FloatValue *left)
+        : FloatValueOperator(left, &IValue::operator_div_error) {}
+
+void FloatValueDivOperatorVisitor::visit(IntValue *obj) {
+    if (obj->val() == 0) {
+        throw std::runtime_error("Division by zero, left value is " + std::to_string(this->left->val()));
+    }
+    this->_result = std::make_shared<FloatValue>(this->left->val() / obj->val());
+}
+
+void FloatValueDivOperatorVisitor::visit(FloatValue *obj) {
+    if (obj->val() == 0.0) {
+        throw std::runtime_error("Division by zero, left value is " + std::to_string(this->left->val()));
+    }
+    this->_result = std::make_shared<FloatValue>(this->left->val() / obj->val());
+}
+
+SIValue FloatValueDivOperatorVisitor::result() const {
     return this->_result;
 }
 
