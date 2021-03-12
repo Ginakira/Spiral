@@ -10,12 +10,12 @@
 #include "spiral_tree.h"
 #include "spiral_runtime.h"
 
-spiral::ASTree init(int argc, char *argv[]) {
-    pANTLR3_INPUT_STREAM input;
-    pSpiralLexer lex;
-    pANTLR3_COMMON_TOKEN_STREAM tokens;
-    pSpiralParser parser;
+pANTLR3_INPUT_STREAM input;
+pSpiralLexer lex;
+pANTLR3_COMMON_TOKEN_STREAM tokens;
+pSpiralParser parser;
 
+spiral::ASTree init(int argc, char *argv[]) {
     assert(argc > 1);
     input = antlr3FileStreamNew((pANTLR3_UINT8) argv[1], ANTLR3_ENC_8BIT);
     lex = SpiralLexerNew(input);
@@ -24,8 +24,14 @@ spiral::ASTree init(int argc, char *argv[]) {
 
     parser = SpiralParserNew(tokens);
     SpiralParser_prog_return r = parser->prog(parser);
-
     return spiral::ASTree(r.tree);
+}
+
+void destroy() {
+    parser->free(parser);
+    tokens->free(tokens);
+    lex->free(lex);
+    input->close(input);
 }
 
 void check(spiral::ASTree &tree) {
@@ -39,15 +45,6 @@ int main(int argc, char *argv[]) {
     spiral::ASTree tree = init(argc, argv);
     spiral::RuntimeEnv env(tree);
     env.run();
-
-
-//    ProgramMaster eval;
-//    eval.run(tree);
-//
-//    parser->free(parser);
-//    tokens->free(tokens);
-//    lex->free(lex);
-//    input->close(input);
-
+    destroy();
     return 0;
 }
