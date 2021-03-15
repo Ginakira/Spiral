@@ -29,6 +29,7 @@ set(SOURCES
         src/spiral_visitor.cc
         src/spiral_handler.cc
         src/spiral_util.cc
+        src/spiral_dfa.cc
         )
 
 set(EXECUTABLE_OUTPUT_PATH ${PROJECT_SOURCE_DIR}/bin)

@@ -14,7 +14,7 @@ ASTree::ASTree(pANTLR3_BASE_TREE tree) : tree(tree) {
     _size = tree->getChildCount(tree);
     for (int i = 0; i < _size; ++i) {
         this->child.emplace_back(
-                ASTree((pANTLR3_BASE_TREE) tree->getChild(tree, i))
+                new ASTree((pANTLR3_BASE_TREE) tree->getChild(tree, i))
         );
     }
 }
@@ -25,7 +25,7 @@ int ASTree::size() const {
     return tree->getChildCount(tree);
 }
 
-ASTree &ASTree::at(int ind) {
+ASTree *&ASTree::at(int ind) {
     if (this->size() <= ind) {
         throw std::runtime_error("ASTree getChild() error occurred! An unexpected index of child.");
     }

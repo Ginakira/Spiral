@@ -17,11 +17,11 @@ class Parameter;
 
 class IMaster {
 public:
-    IMaster(ASTree &, SParameter);
+    IMaster(ASTree *, SParameter);
 
     class IFactory {
     public:
-        virtual IMaster *create(ASTree &, SParameter) = 0;
+        virtual IMaster *create(ASTree *, SParameter) = 0;
 
         virtual void destroy(IMaster *);
     };
@@ -31,34 +31,34 @@ public:
     virtual ~IMaster() = default;
 
 protected:
-    ASTree &tree;
+    ASTree *tree;
     SParameter p;
 };
 
 class PrintMaster : public IMaster {
 public:
-    PrintMaster(ASTree &, SParameter);
+    PrintMaster(ASTree *, SParameter);
 
     SIValue run() override;
 };
 
 class ExprMaster : public IMaster {
 public:
-    ExprMaster(ASTree &, SParameter);
+    ExprMaster(ASTree *, SParameter);
 
     SIValue run() override;
 };
 
 class BlockMaster : public IMaster {
 public:
-    BlockMaster(ASTree &, SParameter);
+    BlockMaster(ASTree *, SParameter);
 
     SIValue run() override;
 };
 
 class ConditionMaster : public IMaster {
 public:
-    ConditionMaster(ASTree &, SParameter);
+    ConditionMaster(ASTree *, SParameter);
 
     SIValue run() override;
 };
@@ -66,7 +66,7 @@ public:
 
 class ControlMaster : public IMaster {
 public:
-    ControlMaster(ASTree &, SParameter);
+    ControlMaster(ASTree *, SParameter);
 
     SIValue run() override;
 };

@@ -21,6 +21,10 @@ class FloatValue;
 
 class StringValue;
 
+class DFA;
+
+class IDFANode;
+
 using SIValue = std::shared_ptr<IValue>;
 using SIntValue = std::shared_ptr<IntValue>;
 using SFloatValue = std::shared_ptr<FloatValue>;

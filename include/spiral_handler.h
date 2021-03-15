@@ -21,13 +21,13 @@ class ControlFactory;
 
 class FactoryHandler {
 public:
-    static void init_factory(ASTree &);
+    static void init_factory(ASTree *);
 
     static FactoryHandler *get();
 
-    virtual bool is_valid(ASTree &) = 0;
+    virtual bool is_valid(ASTree *) = 0;
 
-    virtual void handle(ASTree &) = 0;
+    virtual void handle(ASTree *) = 0;
 
 protected:
     static FactoryHandler *head;
@@ -37,9 +37,9 @@ protected:
 
 class PrintFactoryHandler : public FactoryHandler {
 public:
-    bool is_valid(ASTree &) override;
+    bool is_valid(ASTree *) override;
 
-    void handle(ASTree &) override;
+    void handle(ASTree *) override;
 
 private:
     static PrintFactory *factory;
@@ -47,9 +47,9 @@ private:
 
 class ExprFactoryHandler : public FactoryHandler {
 public:
-    bool is_valid(ASTree &) override;
+    bool is_valid(ASTree *) override;
 
-    void handle(ASTree &) override;
+    void handle(ASTree *) override;
 
 private:
     static ExprFactory *factory;
@@ -57,9 +57,9 @@ private:
 
 class BlockFactoryHandler : public FactoryHandler {
 public:
-    bool is_valid(ASTree &) override;
+    bool is_valid(ASTree *) override;
 
-    void handle(ASTree &) override;
+    void handle(ASTree *) override;
 
 private:
     static BlockFactory *factory;
@@ -67,9 +67,9 @@ private:
 
 class ConditionFactoryHandler : public FactoryHandler {
 public:
-    bool is_valid(ASTree &) override;
+    bool is_valid(ASTree *) override;
 
-    void handle(ASTree &) override;
+    void handle(ASTree *) override;
 
 private:
     static ConditionFactory *factory;
@@ -77,9 +77,9 @@ private:
 
 class ControlFactoryHandler : public FactoryHandler {
 public:
-    bool is_valid(ASTree &) override;
+    bool is_valid(ASTree *) override;
 
-    void handle(ASTree &) override;
+    void handle(ASTree *) override;
 
 private:
     static ControlFactory *factory;

@@ -20,7 +20,7 @@ public:
 
     int size() const;
 
-    ASTree &at(int ind);
+    ASTree *&at(int ind);
 
     std::string text() const;
 
@@ -32,7 +32,7 @@ private:
     pANTLR3_BASE_TREE tree;
     int _type;
     int _size;
-    std::vector<ASTree> child;
+    std::vector<ASTree *> child;
 };
 
 } // namespace spiral

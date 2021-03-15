@@ -11,7 +11,7 @@
 
 namespace spiral {
 
-void FactoryHandler::init_factory(ASTree &tree) {
+void FactoryHandler::init_factory(ASTree *tree) {
     FactoryHandler *p = FactoryHandler::get();
     for (; p != nullptr; p = p->next) {
         if (!p->is_valid(tree)) continue;
@@ -21,10 +21,10 @@ void FactoryHandler::init_factory(ASTree &tree) {
     if (p == nullptr) {
         throw std::runtime_error(
                 "There is no appropriate handler in FactoryHandler::init_factory(). Token type: " +
-                std::to_string(tree.type()));
+                std::to_string(tree->type()));
     }
-    for (int i = 0; i < tree.size(); ++i) {
-        FactoryHandler::init_factory(tree.at(i));
+    for (int i = 0; i < tree->size(); ++i) {
+        FactoryHandler::init_factory(tree->at(i));
     }
 }
 
@@ -39,8 +39,8 @@ FactoryHandler *FactoryHandler::get() {
     return head;
 }
 
-bool PrintFactoryHandler::is_valid(ASTree &tree) {
-    switch (tree.type()) {
+bool PrintFactoryHandler::is_valid(ASTree *tree) {
+    switch (tree->type()) {
         case PRINT:
             return true;
         default:
@@ -48,12 +48,12 @@ bool PrintFactoryHandler::is_valid(ASTree &tree) {
     }
 }
 
-void PrintFactoryHandler::handle(ASTree &tree) {
-    tree.factory = PrintFactoryHandler::factory;
+void PrintFactoryHandler::handle(ASTree *tree) {
+    tree->factory = PrintFactoryHandler::factory;
 }
 
-bool ExprFactoryHandler::is_valid(ASTree &tree) {
-    switch (tree.type()) {
+bool ExprFactoryHandler::is_valid(ASTree *tree) {
+    switch (tree->type()) {
         case INT:
         case FLOAT:
         case STRING:
@@ -72,13 +72,13 @@ bool ExprFactoryHandler::is_valid(ASTree &tree) {
     }
 }
 
-void ExprFactoryHandler::handle(ASTree &tree) {
-    tree.factory = ExprFactoryHandler::factory;
+void ExprFactoryHandler::handle(ASTree *tree) {
+    tree->factory = ExprFactoryHandler::factory;
 }
 
 
-bool BlockFactoryHandler::is_valid(ASTree &tree) {
-    switch (tree.type()) {
+bool BlockFactoryHandler::is_valid(ASTree *tree) {
+    switch (tree->type()) {
         case BLOCK:
             return true;
         default:
@@ -86,12 +86,12 @@ bool BlockFactoryHandler::is_valid(ASTree &tree) {
     }
 }
 
-void BlockFactoryHandler::handle(ASTree &tree) {
-    tree.factory = BlockFactoryHandler::factory;
+void BlockFactoryHandler::handle(ASTree *tree) {
+    tree->factory = BlockFactoryHandler::factory;
 }
 
-bool ConditionFactoryHandler::is_valid(ASTree &tree) {
-    switch (tree.type()) {
+bool ConditionFactoryHandler::is_valid(ASTree *tree) {
+    switch (tree->type()) {
         case OR:
         case AND:
         case EQ:
@@ -106,25 +106,26 @@ bool ConditionFactoryHandler::is_valid(ASTree &tree) {
     }
 }
 
-void ConditionFactoryHandler::handle(ASTree &tree) {
-    tree.factory = ConditionFactoryHandler::factory;
+void ConditionFactoryHandler::handle(ASTree *tree) {
+    tree->factory = ConditionFactoryHandler::factory;
 }
 
 
-bool ControlFactoryHandler::is_valid(ASTree &tree) {
-    switch (tree.type()) {
+bool ControlFactoryHandler::is_valid(ASTree *tree) {
+    switch (tree->type()) {
         case IF:
         case FOR:
         case WHILE:
         case DOWHILE:
+        case BREAK:
             return true;
         default:
             return false;
     }
 }
 
-void ControlFactoryHandler::handle(ASTree &tree) {
-    tree.factory = ControlFactoryHandler::factory;
+void ControlFactoryHandler::handle(ASTree *tree) {
+    tree->factory = ControlFactoryHandler::factory;
 }
 
 PrintFactory *PrintFactoryHandler::factory = new PrintFactory();

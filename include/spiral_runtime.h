@@ -17,14 +17,14 @@ class Parameter;
 
 class RuntimeEnv {
 public:
-    explicit RuntimeEnv(ASTree &);
+    explicit RuntimeEnv(ASTree *);
 
     void run();
 
-    static SIValue getValue(ASTree &, SParameter);
+    static SIValue getValue(ASTree *, SParameter);
 
 private:
-    ASTree &tree;
+    ASTree *tree;
 };
 
 } // namespace spiral

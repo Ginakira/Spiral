@@ -24,11 +24,14 @@ cd bin
 - Selective structure `if` `else`
 - Loop structure `while` `do while` `for`
 - Print statement `print`
-- Scoping capabilities
-- Weakly typed system
+- Numeric calculation `+` `-` `*` `/` `%`
+- Scoping capabilities `{}`
+- Weakly typed system `int` `float` `string`
+- Break `break`
 
 ## Design
 
+- Deterministic Finite Automaton (DFA)
 - Extended Backus-Naur Form (EBNF)
 - Responsibility chain
 - Abstract factory

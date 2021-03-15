@@ -34,15 +34,15 @@ void destroy() {
     input->close(input);
 }
 
-void check(spiral::ASTree &tree) {
-    printf("%s %d\n", tree.text().c_str(), tree.type());
-    for (int i = 0; i < tree.size(); ++i) {
-        check(tree.at(i));
+void check(spiral::ASTree *tree) {
+    printf("%s %d\n", tree->text().c_str(), tree->type());
+    for (int i = 0; i < tree->size(); ++i) {
+        check(tree->at(i));
     }
 }
 
 int main(int argc, char *argv[]) {
-    spiral::ASTree tree = init(argc, argv);
+    auto *tree = new spiral::ASTree(init(argc, argv));
     spiral::RuntimeEnv env(tree);
     env.run();
     destroy();
