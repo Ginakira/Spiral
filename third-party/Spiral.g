@@ -92,6 +92,7 @@ control_stmt
     | defid_expr ';' -> ^(DEF defid_expr)
     | block
     | BREAK ';'!
+    | CONTINUE ';'!
     ;
 
 stmt: expr_stmt
@@ -133,6 +134,7 @@ BLOCK: '{}';
 DEF: 'def';
 NOPE: 'NOPE';
 BREAK: 'break';
+CONTINUE: 'continue';
 
 INT :	'-'? '0'..'9' +
     ;

@@ -118,6 +118,7 @@ bool ControlFactoryHandler::is_valid(ASTree *tree) {
         case WHILE:
         case DOWHILE:
         case BREAK:
+        case CONTINUE:
             return true;
         default:
             return false;

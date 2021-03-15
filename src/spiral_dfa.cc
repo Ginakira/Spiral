@@ -13,7 +13,7 @@
 namespace spiral {
 
 std::stack<IDFANode *> DFA::breakPoint;
-
+std::stack<IDFANode *> DFA::continuePoint;
 int DFA::blockPosition = 100;
 
 DFA::DFA() : head(nullptr), tail(nullptr) {}
@@ -35,7 +35,17 @@ DFA *DFA::build(ASTree *tree) {
     DFA *ret = new DFA();
     switch (tree->type()) {
         case BREAK: {
-            ret->head = ret->tail = new BreakDFANode(breakPoint.top());
+            if (breakPoint.empty()) {
+                throw std::runtime_error("Cannot use break outside of a loop!");
+            }
+            ret->head = ret->tail = new JumpDFANode(breakPoint.top());
+            break;
+        }
+        case CONTINUE: {
+            if (continuePoint.empty()) {
+                throw std::runtime_error("Cannot use continue outside of a loop!");
+            }
+            ret->head = ret->tail = new JumpDFANode(continuePoint.top());
             break;
         }
         case IF: {
@@ -72,38 +82,54 @@ DFA *DFA::build(ASTree *tree) {
             ++DFA::blockPosition;
             ret->head = new BlockBeginDFANode(DFA::blockPosition);
             ret->tail = new BlockEndDFANode(DFA::blockPosition);
+            IDFANode *blank_node = new BlankDFANode(DFA::blockPosition);
             breakPoint.push(ret->tail);
+            continuePoint.push(blank_node);
+
             IDFANode *condition_node = new ConditionDFANode(tree->at(0));
             DFA *stmt = DFA::build(tree->at(1));
             ret->head->at(0) = condition_node;
             condition_node->at(0) = stmt->head;
             condition_node->at(1) = ret->tail;
             stmt->tail->at(0) = condition_node;
+            blank_node->at(0) = condition_node;
+
             breakPoint.pop();
+            continuePoint.pop();
             break;
         }
         case DOWHILE: {
             ++DFA::blockPosition;
             ret->head = new BlockBeginDFANode(DFA::blockPosition);
             ret->tail = new BlockEndDFANode(DFA::blockPosition);
+            IDFANode *blank_node = new BlankDFANode(DFA::blockPosition);
             breakPoint.push(ret->tail);
+            continuePoint.push(blank_node);
+
             IDFANode *condition_node = new ConditionDFANode(tree->at(0));
             DFA *stmt = DFA::build(tree->at(1));
             ret->head->at(0) = stmt->head;
             stmt->tail = condition_node;
             condition_node->at(0) = stmt->head;
             condition_node->at(1) = ret->tail;
+            blank_node->at(0) = condition_node;
+
             breakPoint.pop();
+            continuePoint.pop();
             break;
         }
         case FOR: {
             ++DFA::blockPosition;
             ret->head = new BlockBeginDFANode(DFA::blockPosition);
             ret->tail = new BlockEndDFANode(DFA::blockPosition);
+            IDFANode *blank_node = new BlankDFANode(DFA::blockPosition);
             breakPoint.push(ret->tail);
+            continuePoint.push(blank_node);
+
             IDFANode *init_node = new ExprDFANode(tree->at(0));
             IDFANode *condition_node = new ConditionDFANode(tree->at(1));
             IDFANode *do_node = new ExprDFANode(tree->at(2));
+
             DFA *stmt = DFA::build(tree->at(3));
             ret->head->at(0) = init_node;
             init_node->at(0) = condition_node;
@@ -111,7 +137,10 @@ DFA *DFA::build(ASTree *tree) {
             condition_node->at(1) = ret->tail;
             stmt->tail->at(0) = do_node;
             do_node->at(0) = condition_node;
+            blank_node->at(0) = do_node;
+
             breakPoint.pop();
+            continuePoint.pop();
             break;
         }
         default: {
@@ -138,9 +167,9 @@ BlockEndDFANode::BlockEndDFANode(int position) : SingleDFANode(nullptr, "BlockEn
 
 ConditionDFANode::ConditionDFANode(ASTree *tree) : MultiDFANode(tree, "ConditionDFANode") {}
 
-BreakDFANode::BreakDFANode(IDFANode *node) : SingleDFANode(nullptr, "BreakDFANode"), jump_node(node) {}
+JumpDFANode::JumpDFANode(IDFANode *node) : SingleDFANode(nullptr, "JumpDFANode"), jump_node(node) {}
 
-BlankDFANode::BlankDFANode() : SingleDFANode(nullptr, "BlankDFANode") {}
+BlankDFANode::BlankDFANode(int position) : SingleDFANode(nullptr, "BlankDFANode"), position(position) {}
 
 
 IDFANode *&IDFANode::at(int index) {
@@ -174,11 +203,16 @@ IDFANode *ConditionDFANode::next(SParameter &p) {
     return val->isTrue() ? this->at(0) : this->at(1);
 }
 
-IDFANode *BreakDFANode::next(SParameter &p) {
+IDFANode *JumpDFANode::next(SParameter &p) {
     return this->jump_node;
 }
 
 IDFANode *BlankDFANode::next(SParameter &p) {
+    if (this->position > 0) {
+        while (p->position() != this->position) {
+            p = p->next();
+        }
+    }
     return this->at(0);
 }
 

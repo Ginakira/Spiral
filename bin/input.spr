@@ -4,5 +4,16 @@
         if (a == 4) break;
         print a;
     }
-    print a;
+
+    for (def a = 1; a <= 3; a = a + 1) {
+        print a;
+        if (a) {
+            def a = 105;
+            {
+                {
+                    continue;
+                }
+            }
+        }
+    }
 }
