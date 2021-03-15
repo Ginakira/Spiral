@@ -16,7 +16,7 @@ namespace spiral {
 
 class Parameter {
 public:
-    explicit Parameter(SParameter next);
+    explicit Parameter(SParameter, int = -1);
 
     void define_param(const string &);
 
@@ -26,9 +26,12 @@ public:
 
     SParameter next() const;
 
+    int position() const;
+
 private:
     mutable map<string, SIValue> memory;
     SParameter _next;
+    int _position;
 };
 
 } // namespace spiral

@@ -26,6 +26,8 @@ private:
 
     static std::stack<IDFANode *> breakPoint;
 
+    static int blockPosition;
+
     IDFANode *head, *tail;
 };
 
@@ -38,6 +40,7 @@ public:
     IDFANode *&at(int);
 
     std::string type();
+
 protected:
     ASTree *tree;
     std::vector<IDFANode *> children;
@@ -71,16 +74,22 @@ public:
 
 class BlockBeginDFANode : public SingleDFANode {
 public:
-    explicit BlockBeginDFANode();
+    explicit BlockBeginDFANode(int);
 
     IDFANode *next(SParameter &) override;
+
+private:
+    int position;
 };
 
 class BlockEndDFANode : public SingleDFANode {
 public:
-    explicit BlockEndDFANode();
+    explicit BlockEndDFANode(int);
 
     IDFANode *next(SParameter &) override;
+
+private:
+    int position;
 };
 
 class ConditionDFANode : public MultiDFANode {

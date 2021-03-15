@@ -10,7 +10,7 @@
 
 namespace spiral {
 
-Parameter::Parameter(SParameter next) : _next(std::move(next)) {}
+Parameter::Parameter(SParameter next, int position) : _next(std::move(next)), _position(position) {}
 
 void Parameter::define_param(const string &name) {
     if (this->memory.find(name) != this->memory.end()) {
@@ -41,6 +41,10 @@ void Parameter::set(const string &name, const SIValue &val) {
 
 SParameter Parameter::next() const {
     return this->_next;
+}
+
+int Parameter::position() const {
+    return this->_position;
 }
 
 } // namespace spiral
