@@ -2,10 +2,14 @@
 // Created by Sakata on 2021/2/27.
 //
 
-#include <utility>
+#include <sstream>
 
 #include "spiral_type.h"
 #include "spiral_visitor.h"
+#include "spiral_dfa.h"
+#include "spiral_runtime.h"
+#include "spiral_parameter.h"
+#include "spiral_tree.h"
 
 namespace spiral {
 
@@ -17,6 +21,9 @@ IntValue::IntValue(int x) : IValue("int"), _val(x) {}
 FloatValue::FloatValue(double x) : IValue("float"), _val(x) {}
 
 StringValue::StringValue(std::string x) : IValue("string"), _val(std::move(x)) {}
+
+FunctionValue::FunctionValue(ASTree *tree, DFA *dfa)
+        : IValue("function"), _val(dfa) { this->convert(tree); }
 
 // destructor
 IntValue::~IntValue() {
@@ -31,6 +38,9 @@ StringValue::~StringValue() {
 //    printf("destructor : %s\n", val().c_str());
 }
 
+FunctionValue::~FunctionValue() {
+//    printf("destructor : %s\n", val().c_str());
+}
 
 std::string IValue::type() {
     return this->type_name;
@@ -49,6 +59,10 @@ void StringValue::accept(IValue::IVisitor *vis) {
     vis->visit(this);
 }
 
+void FunctionValue::accept(IValue::IVisitor *vis) {
+    vis->visit(this);
+}
+
 // get value function
 int IntValue::val() const {
     return this->_val;
@@ -64,6 +78,10 @@ std::string StringValue::val() const {
 
 bool IValue::isFalse() {
     return !(this->isTrue());
+}
+
+SIValue IValue::run(SParameter &p, __unused ASTree *tree) {
+    throw std::runtime_error(this->type() + " is not callable!");
 }
 
 // Base operator (when no appropriate operator between types)
@@ -112,6 +130,10 @@ bool IValue::operator!=(IValue &obj) {
     return (*this) < obj || obj < (*this);
 }
 
+bool IValue::operator<(IValue &obj) {
+    this->operator_compare_error(obj);
+    return false;
+}
 
 void IValue::operator_plus_error(IValue &obj) {
     throw std::runtime_error("Unsupported operator :(" + this->type() + " + " + obj.type() + ")");
@@ -235,6 +257,60 @@ bool StringValue::operator<(IValue &obj) {
     StringValueLittleOperatorVisitor vis(this);
     obj.accept(&vis);
     return vis.result()->isTrue();
+}
+
+
+// FunctionValue operator
+bool FunctionValue::isTrue() {
+    return true;
+}
+
+void FunctionValue::convert(ASTree *tree) {
+    this->func_name = tree->at(0)->text();
+    this->params.clear();
+    for (int i = 0, n = tree->at(1)->size(); i < n; ++i) {
+        this->params.emplace_back(tree->at(1)->at(i)->text());
+    }
+}
+
+std::string FunctionValue::val() const {
+    std::string ret = "function " + this->func_name + "(";
+    for (int i = 0; i < this->params.size(); ++i) {
+        if (i) ret += ", ";
+        ret += this->params[i];
+    }
+    ret += ");";
+    return ret;
+}
+
+std::string FunctionValue::name() const {
+    return this->func_name;
+}
+
+void FunctionValue::set_init_param(SParameter init_p) {
+    this->init_param = std::move(init_p);
+}
+
+SIValue FunctionValue::run(SParameter &p, ASTree *param) {
+    this->init_param = std::make_shared<Parameter>(this->init_param);
+    if (param->size() != this->params.size()) {
+        std::string msg;
+        std::stringstream out(msg);
+        out << "Incorrect call to function " << this->name() << "!\n";
+        out << "\texpect " << this->params.size() << " params, but ";
+        out << param->size() << " given.\n";
+        throw std::runtime_error(msg);
+    }
+    for (int i = 0; i < this->params.size(); ++i) {
+        this->init_param->define_param(this->params[i]);
+        this->init_param->set(this->params[i], RuntimeEnv::getValue(param->at(i), p->next()));
+    }
+    this->init_param->define_param(spiral::ReturnValueName);
+    this->init_param->set(spiral::ReturnValueName, spiral::null_val);
+    this->_val->run(this->init_param);
+    SIValue retValue = this->init_param->get(spiral::ReturnValueName);
+    this->init_param = this->init_param->next();
+    return retValue;
 }
 
 } // namespace spiral;

@@ -17,6 +17,8 @@ public:
 
     void visit(StringValue *) override;
 
+    void visit(FunctionValue *) override;
+
     std::string result() const;
 
 private:
@@ -34,6 +36,8 @@ public:
     void visit(FloatValue *) override;
 
     void visit(StringValue *) override;
+
+    void visit(FunctionValue *) override;
 
 protected:
     op_type op;

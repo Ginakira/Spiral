@@ -22,10 +22,11 @@ public:
 private:
     DFA();
 
-    DFA *build(ASTree *);
+    static DFA *build(ASTree *);
 
     static std::stack<IDFANode *> breakPoint;
     static std::stack<IDFANode *> continuePoint;
+    static std::stack<IDFANode *> returnPoint;
     static int blockPosition;
     IDFANode *head, *tail;
 };
@@ -73,8 +74,10 @@ public:
 
     IDFANode *next(SParameter &) override;
 
+    int pos() const;
+
 private:
-    int position;
+    int _pos;
 };
 
 class BlockEndDFANode : public SingleDFANode {
@@ -83,8 +86,10 @@ public:
 
     IDFANode *next(SParameter &) override;
 
+    int pos() const;
+
 private:
-    int position;
+    int _pos;
 };
 
 class ConditionDFANode : public MultiDFANode {
@@ -106,12 +111,36 @@ private:
 
 class BlankDFANode : public SingleDFANode {
 public:
-    BlankDFANode(int = -100);
+    explicit BlankDFANode(int = -100);
+
+    void set_pos(int);
+
+    int pos() const;
 
     IDFANode *next(SParameter &) override;
 
 private:
-    int position;
+    int _pos;
+};
+
+class DefineFunctionDFANode : public SingleDFANode {
+public:
+    DefineFunctionDFANode(ASTree *, DFA *);
+
+    IDFANode *next(SParameter &) override;
+
+private:
+    SFunctionValue func;
+};
+
+class ReturnDFANode : public JumpDFANode {
+public:
+    ReturnDFANode(IDFANode *, ASTree *);
+
+    IDFANode *next(SParameter &) override;
+
+private:
+    ASTree *tree;
 };
 
 } // namespace spiral

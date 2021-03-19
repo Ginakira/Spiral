@@ -112,6 +112,10 @@ SIValue ExprMaster::run() {
             }
             return spiral::null_val;
         }
+        case FUNC_CALL: {
+            auto func = this->p->get(this->tree->at(0)->text());
+            return func->run(this->p, this->tree->at(1));
+        }
         case NOPE: {
             return spiral::true_val;
         }

@@ -8,12 +8,11 @@
 #include "spiral_type.h"
 #include "spiral_dfa.h"
 
-#include <utility>
-
 namespace spiral {
 
 std::stack<IDFANode *> DFA::breakPoint;
 std::stack<IDFANode *> DFA::continuePoint;
+std::stack<IDFANode *> DFA::returnPoint;
 int DFA::blockPosition = 100;
 
 DFA::DFA() : head(nullptr), tail(nullptr) {}
@@ -143,6 +142,30 @@ DFA *DFA::build(ASTree *tree) {
             continuePoint.pop();
             break;
         }
+        case FUNCTION: {
+            auto *return_node = new BlankDFANode();
+
+            returnPoint.push(return_node);
+            DFA *dfa = DFA::build(tree->at(2));
+            returnPoint.pop();
+
+            return_node->set_pos(dynamic_cast<BlockBeginDFANode *>(dfa->head)->pos());
+            return_node->at(0) = dfa->tail;
+
+            ret->head = new DefineFunctionDFANode(tree, dfa);
+            ++blockPosition;
+            ret->tail = new BlockBeginDFANode(blockPosition);
+            ret->head->at(0) = ret->tail;
+
+            break;
+        }
+        case RETURN: {
+            if (returnPoint.empty()) {
+                throw std::runtime_error("Cannot use return outside of a function!");
+            }
+            ret->head = ret->tail = new ReturnDFANode(returnPoint.top(), tree->size() ? tree->at(0) : nullptr);
+            break;
+        }
         default: {
             ret->head = ret->tail = new ExprDFANode(tree);
             break;
@@ -153,24 +176,38 @@ DFA *DFA::build(ASTree *tree) {
 
 
 // DFA Node constructor
-IDFANode::IDFANode(ASTree *tree, int n, std::string _type) : tree(tree), children(n), _type(std::move(_type)) {}
+IDFANode::IDFANode(ASTree *tree, int n, std::string _type)
+        : tree(tree), children(n), _type(std::move(_type)) {}
 
-SingleDFANode::SingleDFANode(ASTree *tree, std::string _type) : IDFANode(tree, 1, std::move(_type)) {}
+SingleDFANode::SingleDFANode(ASTree *tree, std::string _type)
+        : IDFANode(tree, 1, std::move(_type)) {}
 
-MultiDFANode::MultiDFANode(ASTree *tree, std::string _type) : IDFANode(tree, 2, std::move(_type)) {}
+MultiDFANode::MultiDFANode(ASTree *tree, std::string _type)
+        : IDFANode(tree, 2, std::move(_type)) {}
 
-ExprDFANode::ExprDFANode(ASTree *tree) : SingleDFANode(tree, "ExprDFANode") {}
+ExprDFANode::ExprDFANode(ASTree *tree)
+        : SingleDFANode(tree, "ExprDFANode") {}
 
-BlockBeginDFANode::BlockBeginDFANode(int position) : SingleDFANode(nullptr, "BlockBeginDFANode"), position(position) {}
+BlockBeginDFANode::BlockBeginDFANode(int position)
+        : SingleDFANode(nullptr, "BlockBeginDFANode"), _pos(position) {}
 
-BlockEndDFANode::BlockEndDFANode(int position) : SingleDFANode(nullptr, "BlockEndDFANode"), position(position) {}
+BlockEndDFANode::BlockEndDFANode(int position)
+        : SingleDFANode(nullptr, "BlockEndDFANode"), _pos(position) {}
 
-ConditionDFANode::ConditionDFANode(ASTree *tree) : MultiDFANode(tree, "ConditionDFANode") {}
+ConditionDFANode::ConditionDFANode(ASTree *tree)
+        : MultiDFANode(tree, "ConditionDFANode") {}
 
-JumpDFANode::JumpDFANode(IDFANode *node) : SingleDFANode(nullptr, "JumpDFANode"), jump_node(node) {}
+JumpDFANode::JumpDFANode(IDFANode *node)
+        : SingleDFANode(nullptr, "JumpDFANode"), jump_node(node) {}
 
-BlankDFANode::BlankDFANode(int position) : SingleDFANode(nullptr, "BlankDFANode"), position(position) {}
+BlankDFANode::BlankDFANode(int position)
+        : SingleDFANode(nullptr, "BlankDFANode"), _pos(position) {}
 
+DefineFunctionDFANode::DefineFunctionDFANode(ASTree *tree, DFA *dfa)
+        : SingleDFANode(nullptr, "DefineFunctionDFANode"),
+          func(std::make_shared<FunctionValue>(tree, dfa)) {}
+
+ReturnDFANode::ReturnDFANode(IDFANode *jump_node, ASTree *tree) : JumpDFANode(jump_node), tree(tree) {}
 
 IDFANode *&IDFANode::at(int index) {
     return this->children[index];
@@ -186,16 +223,24 @@ IDFANode *ExprDFANode::next(SParameter &p) {
 }
 
 IDFANode *BlockBeginDFANode::next(SParameter &p) {
-    p = std::make_shared<Parameter>(p, this->position);
+    p = std::make_shared<Parameter>(p, this->pos());
     return this->at(0);
 }
 
+int BlockBeginDFANode::pos() const {
+    return this->_pos;
+}
+
 IDFANode *BlockEndDFANode::next(SParameter &p) {
-    while (p->position() != this->position) {
+    while (p->position() != this->pos()) {
         p = p->next();
     }
     p = p->next();
     return this->at(0);
+}
+
+int BlockEndDFANode::pos() const {
+    return this->_pos;
 }
 
 IDFANode *ConditionDFANode::next(SParameter &p) {
@@ -208,12 +253,38 @@ IDFANode *JumpDFANode::next(SParameter &p) {
 }
 
 IDFANode *BlankDFANode::next(SParameter &p) {
-    if (this->position > 0) {
-        while (p->position() != this->position) {
+    if (this->pos() > 0) {
+        while (p->position() != this->pos()) {
             p = p->next();
         }
     }
     return this->at(0);
+}
+
+void BlankDFANode::set_pos(int pos) {
+    this->_pos = pos;
+}
+
+int BlankDFANode::pos() const {
+    return this->_pos;
+}
+
+IDFANode *DefineFunctionDFANode::next(SParameter &p) {
+    SFunctionValue copy_func = std::make_shared<FunctionValue>(*(this->func));
+    p->define_param(copy_func->name());
+    copy_func->set_init_param(p);
+    p->set(copy_func->name(), copy_func);
+    return this->at(0);
+}
+
+IDFANode *ReturnDFANode::next(SParameter &p) {
+    SIValue ret = spiral::null_val;
+    if (this->tree != nullptr) {
+        ret = RuntimeEnv::getValue(this->tree, p);
+    }
+    p->set(spiral::ReturnValueName, ret);
+    return JumpDFANode::next(p);
+
 }
 
 } // namespace spiral

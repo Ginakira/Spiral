@@ -31,6 +31,7 @@ atom: INT
     | ID
     | STRING
     | FLOAT
+    | func_call
     | '('! expr ')'!
     ;
 
@@ -69,6 +70,24 @@ cond_atom
     | -> ^(NOPE)
     ;
 
+func_stmt: FUNCTION^ ID param block;
+
+func_call: ID param_expr -> ^(FUNC_CALL ID param_expr);
+
+param
+    :'(' ')' -> ^(PARAM)
+    | '(' def_param_expr ')' -> ^(PARAM def_param_expr)
+    ;
+
+def_param_expr: ID (','! ID)*;
+
+param_expr
+    : '(' ')' -> ^(PARAM)
+    | '(' param_sub_expr ')' -> ^(PARAM param_sub_expr)
+    ;
+
+param_sub_expr: condition_expr (','! condition_expr)*;
+
 block: block_expr -> ^(BLOCK block_expr);
 
 block_expr
@@ -93,17 +112,20 @@ control_stmt
     | block
     | BREAK ';'!
     | CONTINUE ';'!
+    | RETURN^ condition_expr ';'!
     ;
 
-stmt: expr_stmt
+stmt
+    : expr_stmt
     | control_stmt
+    | func_stmt
     ;
 
 prog
     : (stmt {
             pANTLR3_STRING s = $stmt.tree->toStringTree($stmt.tree);
             assert(s->chars);
-            //printf("tree \%s\n", s->chars);
+//            printf("tree \%s\n", s->chars);
     })+
     ;
 
@@ -135,6 +157,10 @@ DEF: 'def';
 NOPE: 'NOPE';
 BREAK: 'break';
 CONTINUE: 'continue';
+FUNCTION: 'function';
+RETURN: 'return';
+PARAM: 'param';
+FUNC_CALL: 'function_call';
 
 INT :	'-'? '0'..'9' +
     ;

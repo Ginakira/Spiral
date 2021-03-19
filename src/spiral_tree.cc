@@ -3,7 +3,6 @@
 //
 
 #include "spiral_tree.h"
-#include <stdexcept>
 
 
 namespace spiral {

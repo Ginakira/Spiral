@@ -5,6 +5,7 @@
 #ifndef SPIRAL_SPIRAL_TYPE_H
 #define SPIRAL_SPIRAL_TYPE_H
 
+#include <vector>
 #include <string>
 
 #include "spiral_shared_type.h"
@@ -22,6 +23,8 @@ public:
         virtual void visit(FloatValue *) = 0;
 
         virtual void visit(StringValue *) = 0;
+
+        virtual void visit(FunctionValue *) = 0;
     };
 
     std::string type();
@@ -31,6 +34,8 @@ public:
     virtual bool isTrue() = 0;
 
     virtual bool isFalse();
+
+    virtual SIValue run(SParameter &, __unused ASTree *);
 
     virtual SIValue operator+(IValue &);
 
@@ -42,7 +47,7 @@ public:
 
     virtual SIValue operator%(IValue &);
 
-    virtual bool operator<(IValue &) = 0;
+    virtual bool operator<(IValue &);
 
     virtual bool operator>(IValue &);
 
@@ -149,9 +154,37 @@ private:
     std::string _val;
 };
 
+class FunctionValue : public IValue {
+public:
+    explicit FunctionValue(ASTree *, DFA *);
+
+    void accept(IValue::IVisitor *) override;
+
+    std::string val() const;
+
+    std::string name() const;
+
+    bool isTrue() override;
+
+    void set_init_param(SParameter);
+
+    SIValue run(SParameter &, ASTree *) override;
+
+    ~FunctionValue() override;
+
+private:
+    void convert(ASTree *);
+
+    std::string func_name;
+    std::vector<std::string> params;
+    SParameter init_param;
+    DFA *_val{};
+};
+
 static SIntValue null_val = std::make_shared<IntValue>(0);
 static SIntValue true_val = std::make_shared<IntValue>(1);
 static SIntValue false_val = std::make_shared<IntValue>(0);
+static const std::string ReturnValueName = "__FUNCTION_CALL_RETURN_VALUE__";
 
 } // namespace spiral
 

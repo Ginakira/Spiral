@@ -27,7 +27,8 @@ cd bin
 - Numeric calculation `+` `-` `*` `/` `%`
 - Scoping capabilities `{}`
 - Weakly typed system `int` `float` `string`
-- Jump out of the loop `break` `continue`
+- Jump out `break` `continue` `return`
+- Function (support closures) `function`
 
 ## Design
 

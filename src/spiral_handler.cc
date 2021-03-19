@@ -66,6 +66,7 @@ bool ExprFactoryHandler::is_valid(ASTree *tree) {
         case ASSIGN:
         case DEF:
         case NOPE:
+        case FUNC_CALL:
             return true;
         default:
             return false;
@@ -119,6 +120,9 @@ bool ControlFactoryHandler::is_valid(ASTree *tree) {
         case DOWHILE:
         case BREAK:
         case CONTINUE:
+        case FUNCTION:
+        case PARAM:
+        case RETURN:
             return true;
         default:
             return false;

@@ -18,6 +18,10 @@ void ConvertToStringVisitor::visit(spiral::StringValue *obj) {
     this->_result = obj->val();
 }
 
+void ConvertToStringVisitor::visit(FunctionValue *obj) {
+    this->_result = obj->val();
+}
+
 std::string ConvertToStringVisitor::result() const {
     return this->_result;
 }
@@ -30,6 +34,8 @@ void ValueOperator::visit(IntValue *obj) { (this->lvalue->*op)(*obj); }
 void ValueOperator::visit(FloatValue *obj) { (this->lvalue->*op)(*obj); }
 
 void ValueOperator::visit(StringValue *obj) { (this->lvalue->*op)(*obj); }
+
+void ValueOperator::visit(FunctionValue *obj) { (this->lvalue->*op)(*obj); }
 
 // Value base Operator
 IntValueOperator::IntValueOperator(IntValue *left, op_type op) : ValueOperator(left, op), left(left) {}
