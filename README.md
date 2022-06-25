@@ -1,4 +1,6 @@
 # Spiral
+[![FOSSA Status](https://app.fossa.com/api/projects/git%2Bgithub.com%2FGinakira%2FSpiral.svg?type=shield)](https://app.fossa.com/projects/git%2Bgithub.com%2FGinakira%2FSpiral?ref=badge_shield)
+
 
 Spiral 是一个基于 Antlr3 / C++ 实现的自制语言及简易解释器。
 
@@ -37,3 +39,7 @@ cmake --build .
 ## 使用的第三方库
 
 - Antlr 3.4
+
+
+## License
+[![FOSSA Status](https://app.fossa.com/api/projects/git%2Bgithub.com%2FGinakira%2FSpiral.svg?type=large)](https://app.fossa.com/projects/git%2Bgithub.com%2FGinakira%2FSpiral?ref=badge_large)
